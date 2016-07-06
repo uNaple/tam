@@ -1,0 +1,17 @@
+{
+  "name": "Task_Manager",
+  "version": "0.0.2",
+  "description": "",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "body-parser": "^1.15.2",
+    "express": "^4.13.4",
+    "jade": "^1.11.0",
+    "pg-promise": "^3.9.1",
+    "pug": "^2.0.0-alpha6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server.js"
+  }
+}
