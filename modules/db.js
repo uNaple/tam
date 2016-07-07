@@ -70,8 +70,9 @@ function getUsers() {
 	    })
 	})
 }
-//==========================Перетянул у Сани БД к себе
+// ==========================Перетянул у Сани БД к себе
 // var arr = new Array();
+
 // function get(arr){
 // 	connectDB1(function(client){
 // 		var query = `SELECT * FROM users;`;
@@ -92,15 +93,15 @@ function getUsers() {
 // function writeIn(arr){
 // 	connectDB(function(client){
 // 		for(var i = 0; i < arr.length; i++) {
-// 			var query = `INSERT INTO users(name, password, email, global_permission, group_permission)
-// 							VALUES ('${arr[i].first_name}', '${arr[i].last_name}', '${arr[i].key}', '1', '2') RETURNING id;`;
-// 			client.query(query, function(err, result) {
-// 				if(err) {
-// 					console.log(err);
-// 				} else {
-// 					console.log(result.rows[0]);
-// 				}
-// 			})
+// 			var query = `INSERT INTO users(name, password, email, global_permission, group_permission) VALUES ('${arr[i].first_name}', '${arr[i].last_name}', '${arr[i].key}', '1', '2') RETURNING id; \n`;
+// 			fs.appendFile('txt.txt', query);
+// 			console.log(query);
+// 			// client.query(query, function(err, result) {
+// 			// 	if(err) {
+// 			// 		console.log(err);
+// 			// 	} else {
+// 			// 		console.log(result.rows[0]);
+// 			// 	}
 // 		}
 // 	})
 // }
@@ -117,6 +118,7 @@ function getUsers() {
 // 		cb(client);
 // 	});
 // }
+
 // get(arr);
 
 module.exports = {
