@@ -2,34 +2,48 @@ var myTask	= require('./api/object').myTask,
 		myUser	= require('./api/object').myUser,
 		db 			= require('./modules/db');
 
-function print() {
-	var task =  new myTask();
-	task.name = 'TestTask';
-	task.type = '2';
-	task.director = '679';
-	task.controller = '677';
-	task.status = '1';
-	var newTask = new myTask();
 
-	newTask.checkThis(JSON.stringify(task), function(err){
-		if(err) {
-			console.log(err)
-		} else {
-			db.addTask(task, function(err, result) {
-				if(err) {
-					console.log(err);
-				} else {
-					console.log(result);
-				}
-			})
-		}
-	})
-}
-
-// for(var i = 0; i < 20; i++) {
-// 	print(i);
+//=========================================Обновление задачи
+// function print() {
+// 	var task =  new myTask();
+// 	task.id = '2';
+// 	task.name = 'TestTask2';
+// 	task.type = '2';
+// 	task.director = '679';
+// 	task.controller = '677';
+// 	task.status = '1';
+// 	// var newTask = new myTask();
+// 	db.updateTask(task, function(){
+// 		console.log('im inside');
+// 	})
 // }
-print();
+// print();
+
+//=========================================Добавление и проверка задачи
+// function print() {
+// 	var task =  new myTask();
+// 	task.name = 'TestTask';
+// 	task.type = '2';
+// 	task.director = '679';
+// 	task.controller = '677';
+// 	task.status = '1';
+// 	var newTask = new myTask();
+
+// 	newTask.checkThis(JSON.stringify(task), function(err){
+// 		if(err) {
+// 			console.log(err)
+// 		} else {
+// 			db.addTask(task, function(err, result) {
+// 				if(err) {
+// 					console.log(err);
+// 				} else {
+// 					console.log(result);
+// 				}
+// 			})
+// 		}
+// 	})
+// }
+// print();
 
 // =======================================Передача и возвращение JSON
 // function test() {
@@ -46,8 +60,8 @@ print();
 // 		console.log(self);
 // 	});
 // }
-
 // test1();
+
 
 // ==========================Перетянул у Сани БД к себе
 // var arr = new Array();

@@ -115,7 +115,6 @@ myTask.prototype.init = function(obj, cb) {
 	for(var i in task){
 		this[i] = task[i];
 	}
-	// console.log(this);
 	cb(this);
 }
 

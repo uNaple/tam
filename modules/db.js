@@ -106,6 +106,7 @@ function addTask(task, cb) {
 			queryHead += ', parentid';
 			queryTail += `, '${name.parentName}'`;
 		}
+
 		// if(task.priority !== null) {
 		// 	queryHead += ', priority';
 		// 	queryTail += `, '${name.parentName}'`;
@@ -129,6 +130,67 @@ function addTask(task, cb) {
 		    }
 		});
 	});
+}
+
+function updateTask (task, cb){                      							//обновить задание
+	connectDB(function(client) {
+		var query = `UPDATE tasks	SET `;
+		if(task.name !== null) {
+			query += `name = '${task.name}'`;
+		}
+		// for(var i in task) {
+		// 	if(typeof(task[i]) == 'string') {
+		// 		query += ` ${i} = '${task[i]}'`;
+		// 		console.log(i + ': ' + task[i]);
+		// 		console.log(typeof(task[i]));
+		// 	}
+		// }
+		if(task.type !== null) {
+			query += `, type = '${task.type}'`;
+		}
+		if(task.director !== null) {
+			query += `, director = '${task.director}'`;
+		}
+		if(task.controller !== null) {
+			query += `, controller = '${task.controller}'`;
+		}
+		if(task.executor !== null) {
+			query += `, executor = '${task.executor}'`;
+		}
+		if(task.duration !== null) {
+			query += `, duration = '${task.duration}'`;
+		}
+		if(task.status !== null) {
+			query += `, status = '${task.status}'`;
+		}
+		if(task.priority !== null) {
+			query += `, priority = '${task.priority}'`;
+		}
+		if(task.dependence !== null) {
+			query += `, dependence = '${task.dependence}'`;
+		}
+		if(task.parentid !== null) {
+			query += `, parentid = '${task.parentid}'`;
+		}
+		if(task.description !== null) {
+			query += `, description = '${task.description}'`;
+		}
+		if(task.scope !== null) {
+			query += `, scope = '${task.scope}'`;
+		}
+		query += ` WHERE id = ${task.id};`;
+		console.log(query);
+		client.query(query, function(err, result) {
+			    if (err) {
+			    	cb(err);
+			    } else {
+			    	cb(null)
+			    }
+			});
+		// var text = 'Задача с id: ' + `${obj.id}` + ' изменена';
+		// addHistory(client, text, typeOfAction[3]); 	//добавляем в историю
+		//client.end();
+	})
 }
 
 function getUser(id, cb){
@@ -181,6 +243,7 @@ module.exports = {
 	addTypeAction: 	addTypeAction,
 	addUser: 				addUser,
 	addTask: 				addTask,
+	updateTask: 		updateTask,
 	getTask: 				getTask,
 	getUser: 				getUser,
 	getNowDate: 		getNowDate
