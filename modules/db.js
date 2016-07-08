@@ -234,6 +234,20 @@ function getNowDate(){
 	return today;                       //текущая дата в формате timestamp without time zone
 }
 
+function deleteTask(id, cb) {
+	connectDB(function(client){
+		var query = `DELETE FROM tasks WHERE id = ${id}`;
+		client.query(query, function(err, result) {
+			if(err) {
+				console.log(err);
+				cb(err);
+			} else {
+				cb(null, result);
+			}
+		})
+	})
+}
+
 
 module.exports = {
 	connectDB: 			connectDB,
@@ -246,5 +260,6 @@ module.exports = {
 	updateTask: 		updateTask,
 	getTask: 				getTask,
 	getUser: 				getUser,
-	getNowDate: 		getNowDate
+	getNowDate: 		getNowDate,
+	deleteTask: 		deleteTask
 }

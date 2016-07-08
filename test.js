@@ -3,6 +3,21 @@ var myTask	= require('./api/object').myTask,
 		db 			= require('./modules/db');
 
 
+
+
+
+//=================================================Удаление задачи
+// function print(id) {
+// 	db.deleteTask(id, function(err, result) {
+// 		if(err) {
+// 			console.log(err);
+// 		} else {
+// 			console.log(result);
+// 		}
+// 	})
+// }
+// print(3);
+
 //=========================================Обновление задачи
 // function print() {
 // 	var task =  new myTask();
