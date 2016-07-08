@@ -6,5 +6,5 @@ module.exports = {
       port: 8000
     }
   },
-  "postgres" : "postgres://tasker:password@127.0.0.1:5432/tm"
+  postgres : "postgres://tasker:password@127.0.0.1:5432/tm"
 }

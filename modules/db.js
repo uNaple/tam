@@ -25,6 +25,7 @@ function addPermission(val){
 				console.log(result);
 			}
 		})
+		//client.end();
 	})
 }
 
@@ -42,7 +43,33 @@ function addScope(val) {
 	})
 }
 
+function addStatus(val) {
+	connectDB(function(client) {
+		var query = `INSERT INTO status(sign)
+									VALUES ('${val}');`;
+		client.query(query, function (err, result) {
+			if(err) {
+				console.log(err);
+			} else {
+				console.log(result);
+			}
+		})
+	})
+}
 
+function addTypeAction(val) {
+	connectDB(function(client) {
+		var query = `INSERT INTO type_action(sign, description)
+									VALUES ('${val}', 'action');`;
+		client.query(query, function (err, result) {
+			if(err) {
+				console.log(err);
+			} else {
+				console.log(result);
+			}
+		})
+	})
+}
 
 function addUser(user) {														//добавить пользователя
 	connectDB(function(client){
@@ -58,74 +85,103 @@ function addUser(user) {														//добавить пользовател�
 	})
 }
 
-function getUsers() {
-	connectDB(function(client){
-		var queryFinal = 'SELECT * FROM users;'
+function addTask(task, cb) {
+		connectDB( function (client) {					//подключаемся и создаем запрос
+		var queryHead = `INSERT INTO tasks(name, type, director, controller, time_add, status`,
+				queryTail = `VALUES('${task.name}',
+														'${task.type}',
+														'${task.director}',
+														'${task.controller}',
+														'${getNowDate()}',
+														'${task.status}'`;
+		if(task.executor !== null) {
+			queryHead += ', executor';
+			queryTail += `, '${name.executor}'`;
+		}
+		if(task.description !== null) {
+			queryHead += ', description';
+			queryTail += `, '${name.description}'`;
+		}
+		if(task.parentid !== null) {
+			queryHead += ', parentid';
+			queryTail += `, '${name.parentName}'`;
+		}
+		// if(task.priority !== null) {
+		// 	queryHead += ', priority';
+		// 	queryTail += `, '${name.parentName}'`;
+		// }
+		// if(task.dependence !== null) {
+		// 	queryHead += ', dependence';
+		// 	queryTail += `, '${name.parentName}'`;
+		// }
+
+		queryHead += ')';
+		queryTail += ')';
+		var queryFinal = queryHead + queryTail + ' RETURNING id;';
 		client.query(queryFinal, function(err, result) {						//отправляем запрос
-		    if (err) {
-		    	console.log(err);
-		    } else {
-		    	console.log(result.rows);
+		    if(err) {
+		    	cb(err)
 		    }
-	    })
+		    else {
+		    	cb(result.rows);
+		    	console.log('Задача с id: ' + result.rows[0].id);
+    			var text = 'Задача с id: ' + result.rows[0].id + ' добавлена';
+		    }
+		});
+	});
+}
+
+function getUser(id, cb){
+	connectDB(function(client){
+		var query = `SELECT * FROM users WHERE id = ${id}`;
+		client.query(query, function(err, result) {
+			if(err) {
+				console.log(err);
+				cb(err);
+			} else if (result.rows.length == 0) {
+				cb(new Error('Нет такого пользователя'));
+			} else {
+				cb(null, result.rows);
+			}
+		})
 	})
 }
-// ==========================Перетянул у Сани БД к себе
-// var arr = new Array();
 
-// function get(arr){
-// 	connectDB1(function(client){
-// 		var query = `SELECT * FROM users;`;
-// 		client.query(query, function(err, result){
-// 			if(err) {
-// 				console.log(err)
-// 			} else {
-// 				for(var i = 0; i < result.rows.length; i++) {
-// 					arr.push(result.rows[i]);
-// 				}
-// 			}
-// 			writeIn(arr);
-// 			client.end();
-// 		})
-// 	})
-// }
+function getTask(id, cb){
+	connectDB(function(client){
+		var query = `SELECT * FROM tasks WHERE id = ${id}`;
+		client.query(query, function(err, result) {
+			if (err) {
+				console.log(err);
+				cb(err);
+			} else if (result.rows.length == 0) {
+				cb(new Error('Нет задачи с таким id'));
+			} else {
+				cb(null, result.rows);
+			}
+		})
+	})
+}
 
-// function writeIn(arr){
-// 	connectDB(function(client){
-// 		for(var i = 0; i < arr.length; i++) {
-// 			var query = `INSERT INTO users(name, password, email, global_permission, group_permission) VALUES ('${arr[i].first_name}', '${arr[i].last_name}', '${arr[i].key}', '1', '2') RETURNING id; \n`;
-// 			fs.appendFile('txt.txt', query);
-// 			console.log(query);
-// 			// client.query(query, function(err, result) {
-// 			// 	if(err) {
-// 			// 		console.log(err);
-// 			// 	} else {
-// 			// 		console.log(result.rows[0]);
-// 			// 	}
-// 		}
-// 	})
-// }
+function getNowDate(){
+	var objToday = new Date(),
+       	curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
+       	curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
+       	curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds();
+	var today = objToday.getFullYear() + '-' + (objToday.getMonth()+1) + '-' +  objToday.getDate() + ' ' +  curHour + ":" + curMinute + ":" + curSeconds;
+	return today;                       //текущая дата в формате timestamp without time zone
+}
 
-// function connectDB1(cb) { 							//коннект к ДБ
-// 	var pg = require('pg');
-// 	var conString = "postgres://chat:rXjRHIpp6XrXWcDtWN3KZbBnyppVcu@78.140.171.239:5432/chat";
-// 	var client = new pg.Client(conString);
-// 	client.connect(function(err) {
-// 		if(err) {
-// 			console.error('could not connect to postgres', err);
-// 			// throw new Error('could not connect to postgres');
-//  		}
-// 		cb(client);
-// 	});
-// }
-
-// get(arr);
 
 module.exports = {
 	connectDB: 			connectDB,
 	addPermission: 	addPermission,
 	addScope: 			addScope,
+	addStatus: 			addStatus,
+	addTypeAction: 	addTypeAction,
 	addUser: 				addUser,
-	getUsers: 			getUsers,
-	connectDB1: 		connectDB1,
+	addTask: 				addTask,
+	getTask: 				getTask,
+	getUser: 				getUser,
+	getNowDate: 		getNowDate
 }

@@ -1,2 +1,0 @@
-INSERT INTO users(name, password, email, global_permission, group_permission)
-						VALUES ('Антон_Парамонов', 'klfg', '77710000047', '1', '2');
