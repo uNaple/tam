@@ -2,9 +2,17 @@ var myTask	= require('./api/object').myTask,
 		myUser	= require('./api/object').myUser,
 		db 			= require('./modules/db');
 
+// var cmd = true;
+//console.log(process.argv[2]);
 
-
-
+// switch(process.argv[3]) {
+// 	case '1':
+// 		console.log('1');
+// 		break;
+// 	case '2':
+// 		console.log('1');
+// 		break;
+// }
 
 //=================================================Удаление задачи
 // function print(id) {
@@ -35,30 +43,36 @@ var myTask	= require('./api/object').myTask,
 // print();
 
 //=========================================Добавление и проверка задачи
-// function print() {
-// 	var task =  new myTask();
-// 	task.name = 'TestTask';
-// 	task.type = '2';
-// 	task.director = '679';
-// 	task.controller = '677';
-// 	task.status = '1';
-// 	var newTask = new myTask();
+// var tmp0 = new Buffer('TestTask1').toString('base64');
+// console.log(tmp0);
+// var tmp1 = new Buffer('','base64').toString('ascii');
+// console.log(tmp1);
 
-// 	newTask.checkThis(JSON.stringify(task), function(err){
-// 		if(err) {
-// 			console.log(err)
-// 		} else {
-// 			db.addTask(task, function(err, result) {
-// 				if(err) {
-// 					console.log(err);
-// 				} else {
-// 					console.log(result);
-// 				}
-// 			})
-// 		}
-// 	})
-// }
-// print();
+function print() {
+	var task =  new myTask();
+	task.name = 'TestTask11';
+	task.type = '2';
+	task.director = '679';
+	task.controller = '677';
+	task.status = '1';
+	var newTask = new myTask();
+
+	newTask.checkThis(JSON.stringify(task), function(err, obj){
+		if(err) {
+			console.log(err)
+		} else {
+			// console.log(obj);
+			db.addTask(obj, function(err, result) {
+				if(err) {
+					console.log(err);
+				} else {
+					console.log(result);
+				}
+			})
+		}
+	})
+}
+print();
 
 // =======================================Передача и возвращение JSON
 // function test() {

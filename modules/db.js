@@ -72,9 +72,13 @@ function addTypeAction(val) {
 }
 
 function addUser(user) {														//добавить пользователя
-	connectDB(function(client){
+connectDB(function(client){
 		var query = `INSERT INTO users(name, password, email, global_permission, group_permission)
-					 VALUES ('${user.name}', '${user.password}', '${user.email}', '${user.global_permission}', '${user.group_permission}' ) RETURNING id`;
+					 VALUES (decode('${user.name}', 'base64'),
+					 				 decode('${user.password}', 'base64'),
+					 				 decode('${user.email}', 'base64'),
+					 				 '${user.global_permission}',
+					 				 '${user.group_permission}' ) RETURNING id`;
 		client.query(query, function(err, result) {
 	    if (err) {
 	    	console.log(err);
@@ -86,10 +90,11 @@ function addUser(user) {														//добавить пользовател�
 }
 
 function addTask(task, cb) {
-		connectDB( function (client) {					//подключаемся и создаем запрос
+	console.log(task);
+		connectDB( function (client) {			//подключаемся и создаем запрос
 		var queryHead = `INSERT INTO tasks(name, type, director, controller, time_add, status`,
-				queryTail = `VALUES('${task.name}',
-														'${task.type}',
+				queryTail = `VALUES(convert_from(decode('${task.name}', 'base64'), 'UTF-8'),
+													 	'${task.type}',
 														'${task.director}',
 														'${task.controller}',
 														'${getNowDate()}',
@@ -98,42 +103,53 @@ function addTask(task, cb) {
 			queryHead += ', executor';
 			queryTail += `, '${name.executor}'`;
 		}
+		if(task.time_start !== null) {
+			queryHead += ', time_start';
+			queryTail += `, '${name.time_start}'`;
+		}
 		if(task.description !== null) {
 			queryHead += ', description';
-			queryTail += `, '${name.description}'`;
+			queryTail += `, decode('${name.description}', 'base64')`;
 		}
-		if(task.parentid !== null) {
+		if(task.parentid !== null) {	//?????
 			queryHead += ', parentid';
-			queryTail += `, '${name.parentName}'`;
+			queryTail += `, '${name.parentid}'`;
 		}
-
-		// if(task.priority !== null) {
-		// 	queryHead += ', priority';
-		// 	queryTail += `, '${name.parentName}'`;
-		// }
-		// if(task.dependence !== null) {
-		// 	queryHead += ', dependence';
-		// 	queryTail += `, '${name.parentName}'`;
-		// }
-
+		if(task.dependence !== null) {
+			queryHead += ', dependence';
+			queryTail += `, '${name.dependence}'`;
+		}
+		if(task.priority !== null) {
+			queryHead += ', priority';
+			queryTail += `, '${name.priority}'`;
+		}
+		if(task.duration !== null) {
+			queryHead += ', duration';
+			queryTail += `, '${name.duration}'`;
+		}
+		if(task.scope !== null) {
+			queryHead += ', scope';
+			queryTail += `, '${name.scope}'`;
+		}
 		queryHead += ')';
 		queryTail += ')';
-		var queryFinal = queryHead + queryTail + ' RETURNING id;';
+		var queryFinal = queryHead + queryTail + ' RETURNING id, name;';
+		console.log(queryFinal);
 		client.query(queryFinal, function(err, result) {						//отправляем запрос
+
 		    if(err) {
 		    	cb(err)
-		    }
-		    else {
+		    } else {
 		    	cb(result.rows);
-		    	console.log('Задача с id: ' + result.rows[0].id);
-    			var text = 'Задача с id: ' + result.rows[0].id + ' добавлена';
+    			var text = 'Задача ' + result.rows[0].name + ' с id: ' + result.rows[0].id + ' добавлена';
+		    	console.log(text);
 		    }
 		});
 	});
 }
 
 function updateTask (task, cb){                      							//обновить задание
-	connectDB(function(client) {
+	connectDB(function(client) {																		//как обновлять, хранить ли обновленные поля, чтоб не апдейтить все?
 		var query = `UPDATE tasks	SET `;
 		if(task.name !== null) {
 			query += `name = '${task.name}'`;
