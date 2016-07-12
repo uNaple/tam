@@ -35,6 +35,23 @@ function myTask() {
 	this.reminder = null;
 }
 
+function myTask(task) {
+	if(typeof(task) == 'string') {
+		task = JSON.parse(task);
+	} else if(typeof(task) !== 'object') {
+		throw new Error('Неверный тип входных данных');
+	} else if (typeof(task) === 'object') {
+			if(!('name' in task)) {
+				throw new Error('А хуле он пустой то')
+			}
+	}
+	// console.log(task);
+	for(var i in task) {
+		this[i] = task[i];
+	}
+}
+
+//=================================//методы проверки
 myTask.prototype.checkExecutor = function() {
 	var self = this;
 	return new Promise(function(resolve, reject) {
@@ -58,7 +75,6 @@ myTask.prototype.checkExecutor = function() {
 	});
 }
 
-//=================================//методы проверки
 myTask.prototype.checkType = function() {								//проверка правильности родителя у заданного типа задачи, расширить еще
 	var self = this;
 	return new Promise(function(resolve, reject) {
@@ -120,7 +136,7 @@ myTask.prototype.checkDirector = function() {								//Если есть пос�
 
 myTask.prototype.checkThis = function(obj, cb) {							//тут собрать вместе все проверки на дату, на родителя, и пускать задачу дальше только если все ок
 	// console.log(obj);
-	this.init(obj, function(self) {
+	// this.init(obj, function(self) {
 		// console.log(self);
 		Promise.all([self.checkParent(), self.checkDirector(), self.checkType(), self.checkExecutor()]).then(function(resultArray) {
 			console.log(resultArray);
@@ -138,17 +154,22 @@ myTask.prototype.checkThis = function(obj, cb) {							//тут собрать �
 				}
 			}
 		})
-	})
+	// })
 }
+
+myTask.prototype.add = function() {
+	console.log(this);
+}
+
 
 //либо инициализирует this собой, либо создается новый экземпляр, тогда вопрос нахуя мы вообще расширяем класс, если создаем в его методе его новый экземпляр
 myTask.prototype.init = function(obj, cb) {
-	var tmp = JSON.parse(obj),
-			task = new myTask();
+	// var tmp = JSON.parse(obj),
+	// 		task = new myTask();
 	for(var i in tmp) {
-		task[i] = tmp[i];
+		this[i] = tmp[i];
 	}
-	console.log(task);
+	// console.log(task);
 	cb(task); 	//если что заменить тут task на this
 }
 

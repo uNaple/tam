@@ -2,17 +2,6 @@ var myTask	= require('./api/object').myTask,
 		myUser	= require('./api/object').myUser,
 		db 			= require('./modules/db');
 
-// var cmd = true;
-//console.log(process.argv[2]);
-
-// switch(process.argv[3]) {
-// 	case '1':
-// 		console.log('1');
-// 		break;
-// 	case '2':
-// 		console.log('1');
-// 		break;
-// }
 
 //=================================================Удаление задачи
 // function print(id) {
@@ -48,29 +37,54 @@ var myTask	= require('./api/object').myTask,
 // var tmp1 = new Buffer('','base64').toString('ascii');
 // console.log(tmp1);
 
+function add(task) {
+	try {
+		var tmp = new myTask(task);
+	// tmp.add();
+	} catch(err) {
+		console.log(err);
+	}
+	// tmp.add(task, function(err, result) {
+	// 	if(err) {
+	// 		console.log(err);
+	// 	} else {
+	// 		console.log(result);
+	// 	}
+	// });
+}
+
+
 function print() {
-	var task =  new myTask();
+	var task = new Object();
 	task.name = 'TestTask11';
 	task.type = '2';
 	task.director = '679';
 	task.controller = '677';
 	task.status = '1';
-	var newTask = new myTask();
+	var newTask = JSON.stringify(task);
+	var str = 'huy';
+	var int = 1+3;
+	var task1 = new Object();
 
-	newTask.checkThis(JSON.stringify(task), function(err, obj){
-		if(err) {
-			console.log(err)
-		} else {
-			// console.log(obj);
-			db.addTask(obj, function(err, result) {
-				if(err) {
-					console.log(err);
-				} else {
-					console.log(result);
-				}
-			})
-		}
-	})
+	add(int);
+	add(str);
+	add(task1);
+	add(newTask);
+	add(task);
+	// newTask.checkThis(JSON.stringify(task), function(err, obj) {
+	// 	if(err) {
+	// 		console.log(err)
+	// 	} else {
+	// 		// console.log(obj);
+	// 		db.addTask(obj, function(err, result) {
+	// 			if(err) {
+	// 				console.log(err);
+	// 			} else {
+	// 				console.log(result);
+	// 			}
+	// 		})
+	// 	}
+	// })
 }
 print();
 
