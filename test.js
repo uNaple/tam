@@ -40,19 +40,11 @@ var myTask	= require('./api/object').myTask,
 function add(task) {
 	try {
 		var tmp = new myTask(task);
-	// tmp.add();
+		tmp.add();
 	} catch(err) {
 		console.log(err);
 	}
-	// tmp.add(task, function(err, result) {
-	// 	if(err) {
-	// 		console.log(err);
-	// 	} else {
-	// 		console.log(result);
-	// 	}
-	// });
 }
-
 
 function print() {
 	var task = new Object();
@@ -66,25 +58,11 @@ function print() {
 	var int = 1+3;
 	var task1 = new Object();
 
-	add(int);
-	add(str);
-	add(task1);
+	// add(int);
+	// add(str);
+	// add(task1);
 	add(newTask);
-	add(task);
-	// newTask.checkThis(JSON.stringify(task), function(err, obj) {
-	// 	if(err) {
-	// 		console.log(err)
-	// 	} else {
-	// 		// console.log(obj);
-	// 		db.addTask(obj, function(err, result) {
-	// 			if(err) {
-	// 				console.log(err);
-	// 			} else {
-	// 				console.log(result);
-	// 			}
-	// 		})
-	// 	}
-	// })
+	// add(task);
 }
 print();
 

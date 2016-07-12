@@ -91,7 +91,7 @@ connectDB(function(client){
 
 function addTask(task, cb) {
 	console.log(task);
-		connectDB( function (client) {			//подключаемся и создаем запрос
+	connectDB( function (client) {			//подключаемся и создаем запрос
 		var queryHead = `INSERT INTO tasks(name, type, director, controller, time_add, status`,
 				queryTail = `VALUES(convert_from(decode('${task.name}', 'base64'), 'UTF-8'),
 													 	'${task.type}',
@@ -136,14 +136,13 @@ function addTask(task, cb) {
 		var queryFinal = queryHead + queryTail + ' RETURNING id, name;';
 		console.log(queryFinal);
 		client.query(queryFinal, function(err, result) {						//отправляем запрос
-
-		    if(err) {
-		    	cb(err)
-		    } else {
-		    	cb(result.rows);
-    			var text = 'Задача ' + result.rows[0].name + ' с id: ' + result.rows[0].id + ' добавлена';
-		    	console.log(text);
-		    }
+	    if(err) {
+	    	cb(err)
+	    } else {
+	    	cb(result.rows);
+				var text = 'Задача ' + result.rows[0].name + ' с id: ' + result.rows[0].id + ' добавлена';
+	    	console.log(text);
+	    }
 		});
 	});
 }

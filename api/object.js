@@ -10,52 +10,67 @@ function myUser() {
 	this.group_permission 	= null;
 }
 
-function myTask() {
-	this.id = null;
-	this.name = null;
-	this.type = null;
+function myTask(task) {
+	// this.id = null;
+	// this.name = null;
+	// this.type = null;
 
-	this.director = null;
-	this.controller = null;
-	this.executor = null;
+	// this.director = null;
+	// this.controller = null;
+	// this.executor = null;
 
-	this.time_add = null;
-	this.time_start = null;
-	this.time_end = null;
+	// this.time_add = null;
+	// this.time_start = null;
+	// this.time_end = null;
 
-	this.dependence = null;
-	this.parentid = null;
+	// this.dependence = null;
+	// this.parentid = null;
 
-	this.status = null;
-	this.duration = null;
-	this.description = null;
-	this.priority = null;
-	this.scope = null;
+	// this.status = null;
+	// this.duration = null;
+	// this.description = null;
+	// this.priority = null;
+	// this.scope = null;
 
-	this.reminder = null;
+	// this.reminder = null;
+	// console.log('before', this);
+	this.init(task);
+	// console.log('after', this);
+	// this.add();
 }
 
-function myTask(task) {
+myTask.prototype.init = function(task) {
 	if(typeof(task) == 'string') {
-		task = JSON.parse(task);
-	} else if(typeof(task) !== 'object') {
+		try {
+			task = JSON.parse(task);
+		} catch(e) {
+			console.debug(e.message, e.code);
+		}
+	}
+	if(typeof(task) !== 'object') {
 		throw new Error('Неверный тип входных данных');
-	} else if (typeof(task) === 'object') {
-			if(!('name' in task)) {
-				throw new Error('А хуле он пустой то')
-			}
 	}
-	// console.log(task);
-	for(var i in task) {
-		this[i] = task[i];
+	var keys = new Array('id', 'name', 'type',
+		'director', 'controller', 'executor',
+		'time_add', 'time_start', 'time_end',
+		'dependence', 'parentid', 'status',
+		'duration', 'description', 'priority',
+		'scope', 'reminder');
+	for ( var i = 0; i < keys.length; i++) {
+		if (task.hasOwnProperty(keys[i])) {
+			this[keys[i]] = task[keys[i]];
+		} else {
+			this[keys[i]] = null;
+		}
 	}
+	return true;
 }
 
 //=================================//методы проверки
 myTask.prototype.checkExecutor = function() {
 	var self = this;
 	return new Promise(function(resolve, reject) {
-		console.log(self.executor);
+		// console.log(self);
 		if(self.executor !== null) {
 			db.getUser(self.executor, function(err, result) {
 				if(err) {
@@ -77,6 +92,7 @@ myTask.prototype.checkExecutor = function() {
 
 myTask.prototype.checkType = function() {								//проверка правильности родителя у заданного типа задачи, расширить еще
 	var self = this;
+	// console.log(self)
 	return new Promise(function(resolve, reject) {
 		if(self.type == '3' && self.parentid == null) {			//Если подзадача, то должен быть родитель
 			console.log('У подзадачи должен быть родитель. Задача: ' + self.name);
@@ -95,6 +111,7 @@ myTask.prototype.checkType = function() {								//проверка правил
 
 myTask.prototype.checkParent = function() {								//Если есть родитель, то он должен быть из списка задач
 	var self = this;
+	// console.log(self)
 	return new Promise(function(resolve, reject) {
 		if(self.parentid !== null) {
 			db.getTask(self.parentid, function(err, result) {
@@ -134,44 +151,51 @@ myTask.prototype.checkDirector = function() {								//Если есть пос�
 	});
 }
 
-myTask.prototype.checkThis = function(obj, cb) {							//тут собрать вместе все проверки на дату, на родителя, и пускать задачу дальше только если все ок
-	// console.log(obj);
-	// this.init(obj, function(self) {
-		// console.log(self);
-		Promise.all([self.checkParent(), self.checkDirector(), self.checkType(), self.checkExecutor()]).then(function(resultArray) {
-			console.log(resultArray);
-			for(var i = 0; i < resultArray.length; i++) {
-				if(resultArray[i] !== true ){
-					var err = 'Check this find error';
-					cb(err);
-					break;
-				} else if(i == (resultArray.length-1)) {
-					console.log('Check this is OK');
-					// console.log('1 ' + self.name);
-					self.name = new Buffer(self.name).toString('base64');
-					// console.log(self.name);
-					cb(null, self);
-				}
+myTask.prototype.checkThis = function(cb) {							//тут собрать вместе все проверки на дату, на родителя, и пускать задачу дальше только если все ок
+	var self = this;
+	Promise.all([self.checkParent(), self.checkDirector(), self.checkType(), self.checkExecutor()]).then(function(resultArray) {
+		console.log(resultArray);
+		for(var i = 0; i < resultArray.length; i++) {
+			if(resultArray[i] !== true ) {
+				var err = 'Check this find error';
+				cb(err);
+				break;
+			} else if(i == (resultArray.length-1)) {
+				console.log('Check this is OK');
+				self.name = new Buffer(self.name).toString('base64');
+				console.log(self);
+				cb(null, self);
 			}
-		})
-	// })
+		}
+	})
 }
 
 myTask.prototype.add = function() {
-	console.log(this);
+	this.checkThis(function(err, task) {
+		if(err) {
+			console.log(err);
+		} else {
+			db.addTask(task, function(err, result) {
+				if(err) {
+					console.log(err);
+				} else {
+					console.log(result);
+				}
+			})
+		}
+	})
 }
-
 
 //либо инициализирует this собой, либо создается новый экземпляр, тогда вопрос нахуя мы вообще расширяем класс, если создаем в его методе его новый экземпляр
-myTask.prototype.init = function(obj, cb) {
-	// var tmp = JSON.parse(obj),
-	// 		task = new myTask();
-	for(var i in tmp) {
-		this[i] = tmp[i];
-	}
-	// console.log(task);
-	cb(task); 	//если что заменить тут task на this
-}
+// myTask.prototype.init = function(obj, cb) {
+// 	// var tmp = JSON.parse(obj),
+// 	// 		task = new myTask();
+// 	for(var i in tmp) {
+// 		this[i] = tmp[i];
+// 	}
+// 	// console.log(task);
+// 	cb(task); 	//если что заменить тут task на this
+// }
 
 module.exports = {
 	myTask: myTask,
