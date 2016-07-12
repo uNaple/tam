@@ -13,7 +13,7 @@ function connectDB(cb) { 							//коннект к ДБ
 		cb(client);
 	});
 }
-
+//=====Добавление полей
 function addPermission(val){
 	connectDB(function(client){
 		var query = `INSERT INTO global_permissions(sign)
@@ -70,7 +70,7 @@ function addTypeAction(val) {
 		})
 	})
 }
-
+//=============Основные объекты ====Добавление
 function addUser(user) {														//добавить пользователя
 connectDB(function(client){
 		var query = `INSERT INTO users(name, password, email, global_permission, group_permission)
@@ -101,35 +101,35 @@ function addTask(task, cb) {
 														'${task.status}'`;
 		if(task.executor !== null) {
 			queryHead += ', executor';
-			queryTail += `, '${name.executor}'`;
+			queryTail += `, '${task.executor}'`;
 		}
 		if(task.time_start !== null) {
 			queryHead += ', time_start';
-			queryTail += `, '${name.time_start}'`;
+			queryTail += `, '${task.time_start}'`;
 		}
 		if(task.description !== null) {
 			queryHead += ', description';
-			queryTail += `, decode('${name.description}', 'base64')`;
+			queryTail += `, decode('${task.description}', 'base64')`;
 		}
 		if(task.parentid !== null) {	//?????
 			queryHead += ', parentid';
-			queryTail += `, '${name.parentid}'`;
+			queryTail += `, '${task.parentid}'`;
 		}
 		if(task.dependence !== null) {
 			queryHead += ', dependence';
-			queryTail += `, '${name.dependence}'`;
+			queryTail += `, '${task.dependence}'`;
 		}
 		if(task.priority !== null) {
 			queryHead += ', priority';
-			queryTail += `, '${name.priority}'`;
+			queryTail += `, '${task.priority}'`;
 		}
 		if(task.duration !== null) {
 			queryHead += ', duration';
-			queryTail += `, '${name.duration}'`;
+			queryTail += `, '${task.duration}'`;
 		}
 		if(task.scope !== null) {
 			queryHead += ', scope';
-			queryTail += `, '${name.scope}'`;
+			queryTail += `, '${task.scope}'`;
 		}
 		queryHead += ')';
 		queryTail += ')';
@@ -139,7 +139,7 @@ function addTask(task, cb) {
 	    if(err) {
 	    	cb(err)
 	    } else {
-	    	cb(result.rows);
+	    	cb(null, result.rows);
 				var text = 'Задача ' + result.rows[0].name + ' с id: ' + result.rows[0].id + ' добавлена';
 	    	console.log(text);
 	    }
@@ -147,11 +147,19 @@ function addTask(task, cb) {
 	});
 }
 
+// function addHistory() {
+// 	connectDB(function(client) {
+// 		var queryHead = `INSERT INTO history(time, type_action, description, userid, taskid)`,
+// 				queryFinal = `VALUES`;
+// 	})
+// }
+
+//=============Обновления
 function updateTask (task, cb){                      							//обновить задание
 	connectDB(function(client) {																		//как обновлять, хранить ли обновленные поля, чтоб не апдейтить все?
 		var query = `UPDATE tasks	SET `;
 		if(task.name !== null) {
-			query += `name = '${task.name}'`;
+			query += `name = convert_from(decode('${task.name}', 'base64'), 'UTF-8')`;
 		}
 		// for(var i in task) {
 		// 	if(typeof(task[i]) == 'string') {
@@ -208,8 +216,26 @@ function updateTask (task, cb){                      							//обновить �
 	})
 }
 
-function getUser(id, cb){
+function reassignTask(recieve, give) {														//Переназначить задание
+	//кто получает от кого получает
+	//меняем status на ожидание, в истории отмечаем что переназначили
 	connectDB(function(client){
+		client.query (`UPDATE tasks.tasks
+			SET executor = '${recieve}', status = '5'
+			WHERE executor = '${give}'`,
+		function(err, result){
+			if(err) {
+				console.log('Ошибка при переназначении ', err);
+			} else {
+				console.log('Переназначили успешно!');
+				// addHistory(client, 'reassignTask', typeOfAction[1]);
+			}
+		});
+	})
+}
+//============Получение
+function getUser(id, cb) {
+	connectDB(function(client) {
 		var query = `SELECT * FROM users WHERE id = ${id}`;
 		client.query(query, function(err, result) {
 			if(err) {
@@ -224,8 +250,21 @@ function getUser(id, cb){
 	})
 }
 
-function getTask(id, cb){
-	connectDB(function(client){
+function getChildren() {
+	connectDB(function(client) {
+		var query = `SELECT * FROM tasks WHERE parentid = ${id}`;
+		client.query(query, function(err, result) {
+			if(err) {
+				console.log(err);
+			} else {
+				console.log(result);
+			}
+		})
+	})
+}
+
+function getTask(id, cb) {
+	connectDB(function(client) {
 		var query = `SELECT * FROM tasks WHERE id = ${id}`;
 		client.query(query, function(err, result) {
 			if (err) {
@@ -249,8 +288,9 @@ function getNowDate(){
 	return today;                       //текущая дата в формате timestamp without time zone
 }
 
+//=================Удаление
 function deleteTask(id, cb) {
-	connectDB(function(client){
+	connectDB(function(client) {
 		var query = `DELETE FROM tasks WHERE id = ${id}`;
 		client.query(query, function(err, result) {
 			if(err) {

@@ -15,7 +15,7 @@ var myTask	= require('./api/object').myTask,
 // }
 // print(3);
 
-//=========================================Обновление задачи
+// =========================================Обновление задачи
 // function print() {
 // 	var task =  new myTask();
 // 	task.id = '2';
@@ -46,24 +46,67 @@ function add(task) {
 	}
 }
 
-function print() {
+function update(task) {
+	try {
+		console.log(task);
+		var tmp = new myTask(task);
+		tmp.update();
+	} catch(err) {
+		console.log(err);
+	}
+}
+
+function testAdd(val) {
 	var task = new Object();
-	task.name = 'TestTask11';
+	task.name = 'TestTask';
 	task.type = '2';
 	task.director = '679';
 	task.controller = '677';
 	task.status = '1';
+	task.parentid = '1';
 	var newTask = JSON.stringify(task);
-	var str = 'huy';
-	var int = 1+3;
-	var task1 = new Object();
+	for(var i = 0; i < val; i++) {
+		task.name = 'TestTask_' + i;
+		add(task);
+	}
+}
+
+function testUpdate(id) {
+	var task = new Object();
+	task.name = 'TestTask';
+	task.type = '2';
+	task.director = '679';
+	task.controller = '677';
+	task.status = '1';
+	//Для редактирования
+	task.id = id;
+	//Для назначения родителя
+	task.parentid = '2';
+	//Для принятия задачи юзером
+	task.executor = '49';
+	//Приостановить выполнение
+	// task.status = '3';
+	//Отменить выполнение
+	// task.status = '6';
+	var newTask = JSON.stringify(task);
+	update(newTask);
+}
+
+
+function print() {
+	// testAdd(10);
+	// testUpdate(3);
+	// var str = 'hyi';
+	// var int = 1+3;
+	// var task1 = new Object();
 
 	// add(int);
 	// add(str);
 	// add(task1);
-	add(newTask);
+	// add(newTask);
 	// add(task);
 }
+
 print();
 
 // =======================================Передача и возвращение JSON
