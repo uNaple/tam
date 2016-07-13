@@ -66,11 +66,20 @@ function update(task) {
 	try {
 		console.log(task);
 		var tmp = new myTask(task);
-		tmp.update();
+		// tmp.update();
+		tmp.delete();
 	} catch(err) {
 		console.log(err);
 	}
 }
+
+// function delete() {
+// 	try {
+// 		console.log('1');
+// 	} catch(err) {
+// 		console.log(err);
+// 	}
+// }
 
 function testAdd(val) {
 	var task = new Object();
@@ -107,6 +116,7 @@ function testUpdate(id) {
 	// task.status = '6';
 	var newTask = JSON.stringify(task);
 	update(newTask);
+
 }
 
 
@@ -125,7 +135,7 @@ function print() {
 	// 	}
 	// })
 	// testAdd(10);
-	testUpdate(3);
+	testUpdate(1);
 	// var str = 'hyi';
 	// var int = 1+3;
 	// var task1 = new Object();

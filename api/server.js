@@ -18,12 +18,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/test', function (req, res) {
-	console.log('req task with id=',req.query.id);
-	db.getTask(req.query.id, function(err, result) {
-		if(err) {
-			res.send(err);
-		} else {
-			res.send(result);
-		}
-	})
+	// console.log('req task with id=',req.query.id);
+	// db.getTask(req.query.id, function(err, result) {
+	// 	if(err) {
+	// 		res.send(err);
+	// 	} else {
+	// 		res.send(result);
+	// 	}
+	// })
+
 });

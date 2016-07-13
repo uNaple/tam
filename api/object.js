@@ -67,18 +67,19 @@ myTask.prototype.init = function(task) {
 }
 
 //=================================//методы проверки
-myTask.prototype.checkParent = function() {								//Если есть родитель, то он должен быть из списка задач,не быть самим собой
+myTask.prototype.checkParent = function() {								//Если есть родитель, то он должен быть из списка задач,не быть самим собой, зависимость и родитель не могуь быть одним и тем же
 	var self = this;
 	// console.log(self)
 	return new Promise(function(resolve, reject) {
 		if(self.parentid !== null) {
 			db.getTask(self.parentid, function(err, result) {
-				// console.log(result[0].id);
 				if(err) {
 					reject(err);
-				} else if (self.id == result[0].id) {
+				} else if(self.id == result[0].id) {
 					reject(new Error('Задача не может быть родителем самому себе'));
-				} else {
+				} else if(self.parentid === self.dependence) {
+					reject(new Error('Задача не может зависеть от родительской задачи'));
+				}	else {
 					resolve();
 				}
 			})
@@ -148,74 +149,13 @@ myTask.prototype.checkUsers = function() {
 	});
 }
 
-
-myTask.prototype.checkDirector = function() {								//Если есть постановщик, то он должен быть из списка пользователей, такие же проверки для всех пользователей
-	var self = this;
-	// console.log(self);
-	return new Promise(function(resolve, reject) {
-		db.getUser(self.director, function(err, result) {
-			if(err) {
-				reject(err);
-			} else {
-				resolve(result);
-			}
-		})
-	}).then(function(result) {
-			console.log('Check director is OK');
-			return true;
-	}, function(err) {
-		console.log('Ошибка при загрузке пользователя ' + err);
-	});
-}
-
-myTask.prototype.checkController = function() {
-	var self = this;
-	// console.log(self);
-	return new Promise(function(resolve, reject) {
-		if(self.controller !== null) {
-			db.getUser(self.controller, function(err, result) {
-				if(err) {
-					reject(err);
-				} else {
-					resolve();
-				}
-			})
-		} else {
-			resolve();
-		}
-	}).then(function() {
-			console.log('Check controller is OK');
-			return true;
-	}, function(err) {
-		console.log('Ошибка при загрузке пользователя ' + err);
-	});
-}
-
-myTask.prototype.checkExecutor = function() {
-	var self = this;
-	// console.log(self);
-	return new Promise(function(resolve, reject) {
-		if(self.executor !== null) {
-			db.getUser(self.executor, function(err, result) {
-				if(err) {
-					reject(err);
-				} else {
-					resolve();
-				}
-			})
-		} else {
-			resolve();
-		}
-	}).then(function() {
-			console.log('Check executor is OK');
-			return true;
-	}, function(err) {
-		console.log('Ошибка при загрузке пользователя ' + err);
-	});
+myTask.prototype.checkPermissions = function() {
+	console.log('Тут проверяются разрешения на удаление');
+	return true;
 }
 
 myTask.prototype.checkThis = function(cb) {							//тут собрать вместе все проверки на дату, на родителя, и пускать задачу дальше только если все ок
-	var self = this;
+	var self = this;																			//можно передавать массив в качестве аргумента, чтоб можно было проверять каждый раз свои данные
 	Promise.all([self.checkParent(), self.checkType(), self.checkUsers()]).then(function(resultArray) {
 		console.log(resultArray);
 		for(var i = 0; i < resultArray.length; i++) {
@@ -231,10 +171,6 @@ myTask.prototype.checkThis = function(cb) {							//тут собрать вме
 		}
 	})
 }
-
-// myTask.prototype.checkChildren() {
-
-// }
 
 myTask.prototype.add = function() {
 	this.checkThis(function(err, task) {
@@ -268,11 +204,98 @@ myTask.prototype.update = function() {
 	})
 }
 
-// myTask.prototype.delete = function() {
-// 	this.
-// }
+myTask.prototype.delete = function() {
+	var self = this;
+	if(this.checkPermissions()) {
+		db.getChildren(self.id, function(err, result) {
+			if(err) {
+				console.log(err);
+			} else if(result.rows.length !== 0) {
+				console.log(`у задачи есть подзадачи (${result.row.length}), и они погибнут при удалении родителя`);
+				// for()//тут происходит массовое гонение подзадач, у которых текущая родитель
+				// console.log(result);
+			} else {
+				db.deleteTask(self.id, function(err, result) {
+					if(err){
+						console.log(err);
+					} else {
+						console.log(result);
+					}
+				})
+			}
+		})
+	} else {
+		console.log('Нет прав для удаления');
+	}
+}
 
 module.exports = {
 	myTask: myTask,
 	myUser: myUser
 }
+
+
+// myTask.prototype.checkDirector = function() {								//Если есть постановщик, то он должен быть из списка пользователей, такие же проверки для всех пользователей
+// 	var self = this;
+// 	// console.log(self);
+// 	return new Promise(function(resolve, reject) {
+// 		db.getUser(self.director, function(err, result) {
+// 			if(err) {
+// 				reject(err);
+// 			} else {
+// 				resolve(result);
+// 			}
+// 		})
+// 	}).then(function(result) {
+// 			console.log('Check director is OK');
+// 			return true;
+// 	}, function(err) {
+// 		console.log('Ошибка при загрузке пользователя ' + err);
+// 	});
+// }
+
+// myTask.prototype.checkController = function() {
+// 	var self = this;
+// 	// console.log(self);
+// 	return new Promise(function(resolve, reject) {
+// 		if(self.controller !== null) {
+// 			db.getUser(self.controller, function(err, result) {
+// 				if(err) {
+// 					reject(err);
+// 				} else {
+// 					resolve();
+// 				}
+// 			})
+// 		} else {
+// 			resolve();
+// 		}
+// 	}).then(function() {
+// 			console.log('Check controller is OK');
+// 			return true;
+// 	}, function(err) {
+// 		console.log('Ошибка при загрузке пользователя ' + err);
+// 	});
+// }
+
+// myTask.prototype.checkExecutor = function() {
+// 	var self = this;
+// 	// console.log(self);
+// 	return new Promise(function(resolve, reject) {
+// 		if(self.executor !== null) {
+// 			db.getUser(self.executor, function(err, result) {
+// 				if(err) {
+// 					reject(err);
+// 				} else {
+// 					resolve();
+// 				}
+// 			})
+// 		} else {
+// 			resolve();
+// 		}
+// 	}).then(function() {
+// 			console.log('Check executor is OK');
+// 			return true;
+// 	}, function(err) {
+// 		console.log('Ошибка при загрузке пользователя ' + err);
+// 	});
+// }

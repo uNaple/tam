@@ -251,19 +251,6 @@ function getUser(id, cb) {
 	})
 }
 
-// function getChildren() {
-// 	connectDB(function(client) {
-// 		var query = `SELECT * FROM tasks WHERE parentid = ${id}`;
-// 		client.query(query, function(err, result) {
-// 			if(err) {
-// 				console.log(err);
-// 			} else {
-// 				console.log(result);
-// 			}
-// 		})
-// 	})
-// }
-
 function getTask(id, cb) {
 	connectDB(function(client) {
 		var query = `SELECT * FROM tasks WHERE id = ${id}`;
@@ -280,12 +267,26 @@ function getTask(id, cb) {
 	})
 }
 
+function getChildren(id, cb) {
+	connectDB(function(client) {
+		var query = `SELECT * FROM tasks WHERE parentid = ${id}`;
+		client.query(query, function(err, result) {
+			if(err) {
+				console.log(err);
+				cb(err);
+			} else {
+				// console.log(result)
+				cb(null, result);
+			}
+		})
+	})
+}
+
 function getUsers(str, cb) {			//str строка для выборки, указываем то что надо выбрать
 	connectDB(function(client) {
 		var query = `SELECT ${str} FROM users;`;
 		client.query(query, function(err, result) {
 			if(err) {
-				// console.log(err);
 				cb(err);
 			} else {
 				cb(null, result.rows);
@@ -306,7 +307,7 @@ function getNowDate(){
 //=================Удаление
 function deleteTask(id, cb) {
 	connectDB(function(client) {
-		var query = `DELETE FROM tasks WHERE id = ${id}`;
+		var query = `UPDATE tasks SET status = '7' WHERE id = ${id}`;
 		client.query(query, function(err, result) {
 			if(err) {
 				console.log(err);
@@ -330,6 +331,7 @@ module.exports = {
 	getTask: 				getTask,
 	getUser: 				getUser,
 	getUsers: 			getUsers,
+	getChildren: 		getChildren,
 	getNowDate: 		getNowDate,
 	deleteTask: 		deleteTask
 }
