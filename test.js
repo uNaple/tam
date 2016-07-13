@@ -36,6 +36,22 @@ var myTask	= require('./api/object').myTask,
 // console.log(tmp0);
 // var tmp1 = new Buffer('','base64').toString('ascii');
 // console.log(tmp1);
+//=======================Хттп реквест
+// var xhr = new XMLHttpRequest();
+// var id = 2;
+// var params = 'id='+id;
+// xhr.open('GET', '/test?'+params, true);
+
+// xhr.send();
+
+// xhr.onreadystatechange = function() {
+//   if (xhr.readyState != 4) return;
+//   if (xhr.status != 200) {
+//     alert(xhr.status + ': ' + xhr.statusText);
+//   } else {
+//     document.writeln('<p>'+xhr.responseText+'</p>');
+//   }
+// }
 
 function add(task) {
 	try {
@@ -74,14 +90,15 @@ function testAdd(val) {
 function testUpdate(id) {
 	var task = new Object();
 	task.name = 'TestTask';
-	task.type = '2';
+	task.type = '1';
 	task.director = '679';
 	task.controller = '677';
+	// task.executor = '1677';
 	task.status = '1';
 	//Для редактирования
 	task.id = id;
 	//Для назначения родителя
-	task.parentid = '2';
+	task.parentid = '4';
 	//Для принятия задачи юзером
 	task.executor = '49';
 	//Приостановить выполнение
@@ -94,8 +111,21 @@ function testUpdate(id) {
 
 
 function print() {
+// var director = '3';
+	// db.getUsers('*', function(err, result) {
+	// 	if(err) {
+	// 		console.log(err);
+	// 	} else {
+	// 		var res = result.hasOwnProperty(director);
+	// 		console.log(res);
+	// 		// for(var key in result) {
+	// 		// 	result[key].hasOwnProperty(director);
+	// 		// 	// console.log(result[key]);
+	// 		// }
+	// 	}
+	// })
 	// testAdd(10);
-	// testUpdate(3);
+	testUpdate(3);
 	// var str = 'hyi';
 	// var int = 1+3;
 	// var task1 = new Object();

@@ -73,8 +73,11 @@ myTask.prototype.checkParent = function() {								//Если есть роди�
 	return new Promise(function(resolve, reject) {
 		if(self.parentid !== null) {
 			db.getTask(self.parentid, function(err, result) {
+				// console.log(result[0].id);
 				if(err) {
 					reject(err);
+				} else if (self.id == result[0].id) {
+					reject(new Error('Задача не может быть родителем самому себе'));
 				} else {
 					resolve();
 				}
@@ -86,7 +89,8 @@ myTask.prototype.checkParent = function() {								//Если есть роди�
 			console.log('Check parent is OK');
 			return true;
 		}, function(err) {
-		console.log('Check parent is BAD ' + err);
+			console.log('Check parent error: ', err.message);
+			return false;
 	});
 }
 
@@ -94,20 +98,56 @@ myTask.prototype.checkType = function() {								//проверка правил
 	var self = this;
 	// console.log(self)
 	return new Promise(function(resolve, reject) {
-		if(self.type == '3' && self.parentid == null) {			//Если подзадача, то должен быть родитель
-			console.log('У подзадачи должен быть родитель. Задача: ' + self.name);
-			reject();
-		} else {
+		if(self.type === '3' && self.parentid === null) {			//Если подзадача, то должен быть родитель
+			reject(new Error('У подзадачи должен быть родитель. Задача: ' + self.name));
+		} else if(self.type === '2' && self.parent !== null) {
+			reject(new Error('У проекта не может быть родителя'));
+		}	else {
 			resolve();
 		}
 	}).then(function() {
 		console.log('Check type is OK');
 		return true;
-	}, function() {
-		console.log('Check type is BAD');
+	}, function(err) {
+		console.log('Check type error: ', err.message);
 		return false;
 	});
 }
+
+myTask.prototype.checkUsers = function() {
+	var self = this;
+	return new Promise(function(resolve, reject) {
+		db.getUsers('id', function(err, result) {
+			if(err) {
+				reject(err);
+			} else {
+				if(self.controller !== null) {
+					if(!result.hasOwnProperty(self.director)) {
+						reject(new Error('Постановщик должен быть из списка контактов'));
+					}
+				}
+				if(self.controller !== null) {
+					if(!result.hasOwnProperty(self.controller)) {
+						reject(new Error('Контроллер должен быть из списка контактов'));
+					}
+				}
+				if(self.executor !== null) {
+					if(!result.hasOwnProperty(self.executor)) {
+						reject(new Error('Пользователь должен быть из списка контактов'));
+					}
+				}
+				resolve();
+			}
+		})
+	}).then(function() {
+			console.log('Check users is OK');
+			return true;
+	}, function(err) {
+		console.log('Check users error: ' + err.message);
+		return false;
+	});
+}
+
 
 myTask.prototype.checkDirector = function() {								//Если есть постановщик, то он должен быть из списка пользователей, такие же проверки для всех пользователей
 	var self = this;
@@ -176,12 +216,11 @@ myTask.prototype.checkExecutor = function() {
 
 myTask.prototype.checkThis = function(cb) {							//тут собрать вместе все проверки на дату, на родителя, и пускать задачу дальше только если все ок
 	var self = this;
-	Promise.all([self.checkParent(), self.checkType(), self.checkDirector(), self.checkController(), self.checkExecutor()]).then(function(resultArray) {
+	Promise.all([self.checkParent(), self.checkType(), self.checkUsers()]).then(function(resultArray) {
 		console.log(resultArray);
 		for(var i = 0; i < resultArray.length; i++) {
 			if(resultArray[i] !== true ) {
-				var err = 'Check this find error';
-				cb(err);
+				cb(new Error('Check this find error'));
 				break;
 			} else if(i == (resultArray.length-1)) {
 				console.log('Check this is OK');
@@ -216,11 +255,11 @@ myTask.prototype.add = function() {
 myTask.prototype.update = function() {
 	this.checkThis(function(err, task) {
 		if(err) {
-			console.log(err)
+			console.log(err.message);
 		} else {
 			db.updateTask(task, function(err, result) {
 				if(err) {
-					console.log(err)
+					console.log(err.message);
 				} else {
 					console.log('up-to-date');
 				}

@@ -216,23 +216,24 @@ function updateTask (task, cb){                      							//обновить �
 	})
 }
 
-function reassignTask(recieve, give) {														//Переназначить задание
-	//кто получает от кого получает
-	//меняем status на ожидание, в истории отмечаем что переназначили
-	connectDB(function(client){
-		client.query (`UPDATE tasks.tasks
-			SET executor = '${recieve}', status = '5'
-			WHERE executor = '${give}'`,
-		function(err, result){
-			if(err) {
-				console.log('Ошибка при переназначении ', err);
-			} else {
-				console.log('Переназначили успешно!');
-				// addHistory(client, 'reassignTask', typeOfAction[1]);
-			}
-		});
-	})
-}
+// function reassignTask(recieve, give) {														//Переназначить задание
+// 	//кто получает от кого получает
+// 	//меняем status на ожидание, в истории отмечаем что переназначили
+// 	connectDB(function(client){
+// 		client.query (`UPDATE tasks.tasks
+// 			SET executor = '${recieve}', status = '5'
+// 			WHERE executor = '${give}'`,
+// 		function(err, result){
+// 			if(err) {
+// 				console.log('Ошибка при переназначении ', err);
+// 			} else {
+// 				console.log('Переназначили успешно!');
+// 				// addHistory(client, 'reassignTask', typeOfAction[1]);
+// 			}
+// 		});
+// 	})
+// }
+
 //============Получение
 function getUser(id, cb) {
 	connectDB(function(client) {
@@ -250,18 +251,18 @@ function getUser(id, cb) {
 	})
 }
 
-function getChildren() {
-	connectDB(function(client) {
-		var query = `SELECT * FROM tasks WHERE parentid = ${id}`;
-		client.query(query, function(err, result) {
-			if(err) {
-				console.log(err);
-			} else {
-				console.log(result);
-			}
-		})
-	})
-}
+// function getChildren() {
+// 	connectDB(function(client) {
+// 		var query = `SELECT * FROM tasks WHERE parentid = ${id}`;
+// 		client.query(query, function(err, result) {
+// 			if(err) {
+// 				console.log(err);
+// 			} else {
+// 				console.log(result);
+// 			}
+// 		})
+// 	})
+// }
 
 function getTask(id, cb) {
 	connectDB(function(client) {
@@ -272,6 +273,20 @@ function getTask(id, cb) {
 				cb(err);
 			} else if (result.rows.length == 0) {
 				cb(new Error('Нет задачи с таким id'));
+			} else {
+				cb(null, result.rows);
+			}
+		})
+	})
+}
+
+function getUsers(str, cb) {			//str строка для выборки, указываем то что надо выбрать
+	connectDB(function(client) {
+		var query = `SELECT ${str} FROM users;`;
+		client.query(query, function(err, result) {
+			if(err) {
+				// console.log(err);
+				cb(err);
 			} else {
 				cb(null, result.rows);
 			}
@@ -303,7 +318,6 @@ function deleteTask(id, cb) {
 	})
 }
 
-
 module.exports = {
 	connectDB: 			connectDB,
 	addPermission: 	addPermission,
@@ -315,6 +329,7 @@ module.exports = {
 	updateTask: 		updateTask,
 	getTask: 				getTask,
 	getUser: 				getUser,
+	getUsers: 			getUsers,
 	getNowDate: 		getNowDate,
 	deleteTask: 		deleteTask
 }
