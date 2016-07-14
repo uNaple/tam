@@ -33,10 +33,10 @@ function myTask(task) {
 	// this.scope = null;
 
 	// this.reminder = null;
+
 	// console.log('before', this);
 	this.init(task);
 	// console.log('after', this);
-	// this.add();
 }
 
 myTask.prototype.init = function(task) {
