@@ -40,6 +40,7 @@ function myTask(task) {
 }
 
 myTask.prototype.init = function(task) {
+	console.log('myTask.init:', task);
 	if(typeof(task) == 'string') {
 		try {
 			task = JSON.parse(task);
@@ -172,16 +173,16 @@ myTask.prototype.checkThis = function(cb) {							//тут собрать вме
 	})
 }
 
-myTask.prototype.add = function() {
+myTask.prototype.add = function(cb) {
 	this.checkThis(function(err, task) {
 		if(err) {
-			console.log(err);
+			cb(err);
 		} else {
 			db.addTask(task, function(err, result) {
 				if(err) {
-					console.log(err);
+					cb(err);
 				} else {
-					console.log(result);
+					cb(null, result);
 				}
 			})
 		}

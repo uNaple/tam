@@ -1,4 +1,5 @@
 "use strict"
+var myTask = require('./object').myTask;
 
 var config 	= require('../config/config.js'),
 		express = require('express'),
@@ -34,14 +35,39 @@ app.get('/', function (req, res) {
   // res.send('Hello World!');
 });
 
-app.get('/test', function (req, res) {
+app.get('/showAll', function (req, res) {
 	// console.log('req task with id=',req.query.id);
 	// console.log(req);
-	db.getTask(req.query.id, function(err, result) {
+	db.getTasks(function(err, result) {
 		if(err) {
 			res.send(err);
 		} else {
 			res.send(JSON.stringify(result));
 		}
 	})
+})
+
+app.post('/addTask', function (req, res) {
+	// console.log('req task with id=',req.query.id);
+	// console.log(req);
+	// console.log(req.body);//проверяю, добавляю в бд, и шлю ответ с результатом
+	// res.send(JSON.stringify(req.body));
+	// console.log(req.body);
+	var task = new myTask(req.body);
+	// console.log(task);
+
+	task.add(function(err, result) {
+		if(err) {
+			res.send(err);
+		} else {
+			res.send(result);
+		}
+	});
+		// db.addTask(function(err, result) {
+	// 	if(err) {
+	// 		res.send(err);
+	// 	} else {
+	// 		res.send(JSON.stringify(result));
+	// 	}
+	// })
 })
