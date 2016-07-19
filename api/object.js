@@ -1,7 +1,6 @@
 var db 			= require('../modules/db'),
 		Promise = require('bluebird');
 
-
 function myUser() {
 	this.name 		= null;
 	this.password = null;
@@ -35,17 +34,17 @@ function myTask(task) {
 	// this.reminder = null;
 
 	// console.log('before', this);
+	console.info('myTask func ');
 	this.init(task);
-	// console.log('after', this);
 }
 
 myTask.prototype.init = function(task) {
-	console.log('myTask.init:', task);
+	console.info('myTask.init\n', task);
 	if(typeof(task) == 'string') {
 		try {
 			task = JSON.parse(task);
 		} catch(e) {
-			console.debug(e.message, e.code);
+			console.error('myTask.init ', e.message);
 		}
 	}
 	if(typeof(task) !== 'object') {
@@ -59,7 +58,11 @@ myTask.prototype.init = function(task) {
 		'scope', 'reminder');
 	for ( var i = 0; i < keys.length; i++) {
 		if (task.hasOwnProperty(keys[i])) {
-			this[keys[i]] = task[keys[i]];
+			if(task[keys[i]] !== '') {
+				this[keys[i]] = task[keys[i]];
+			} else {
+				this[keys[i]] = null;
+			}
 		} else {
 			this[keys[i]] = null;
 		}
@@ -70,7 +73,7 @@ myTask.prototype.init = function(task) {
 //=================================//методы проверки
 myTask.prototype.checkParent = function() {								//Если есть родитель, то он должен быть из списка задач,не быть самим собой, зависимость и родитель не могуь быть одним и тем же
 	var self = this;
-	// console.log(self)
+	console.info('myTask.checkParent func');
 	return new Promise(function(resolve, reject) {
 		if(self.parentid !== null) {
 			db.getTask(self.parentid, function(err, result) {
@@ -88,16 +91,17 @@ myTask.prototype.checkParent = function() {								//Если есть роди�
 			resolve();
 		}
 	}).then(function() {
-			console.log('Check parent is OK');
+			console.info('checkParent is OK');
 			return true;
 		}, function(err) {
-			console.log('Check parent error: ', err.message);
+			console.error('checkParent error: ', err.message);
 			return false;
 	});
 }
 
 myTask.prototype.checkType = function() {								//проверка правильности родителя у заданного типа задачи, расширить еще
 	var self = this;
+	console.info('myTask.checkType func')
 	// console.log(self)
 	return new Promise(function(resolve, reject) {
 		if(self.type === '3' && self.parentid === null) {			//Если подзадача, то должен быть родитель
@@ -108,26 +112,29 @@ myTask.prototype.checkType = function() {								//проверка правил
 			resolve();
 		}
 	}).then(function() {
-		console.log('Check type is OK');
+		console.info('checkType is OK');
 		return true;
 	}, function(err) {
-		console.log('Check type error: ', err.message);
+		console.error('checkType error: ', err.message);
 		return false;
 	});
 }
 
 myTask.prototype.checkUsers = function() {
 	var self = this;
+	console.info('myTask.checkUser func');
 	return new Promise(function(resolve, reject) {
 		db.getUsers('id', function(err, result) {
 			if(err) {
 				reject(err);
 			} else {
-				if(self.controller !== null) {
+				console.log(self);
+				if(self.director !== null ) {
 					if(!result.hasOwnProperty(self.director)) {
 						reject(new Error('Постановщик должен быть из списка контактов'));
 					}
 				}
+				//&& self.controller.length !== '0' && self.controller !== ''
 				if(self.controller !== null) {
 					if(!result.hasOwnProperty(self.controller)) {
 						reject(new Error('Контроллер должен быть из списка контактов'));
@@ -135,38 +142,39 @@ myTask.prototype.checkUsers = function() {
 				}
 				if(self.executor !== null) {
 					if(!result.hasOwnProperty(self.executor)) {
-						reject(new Error('Пользователь должен быть из списка контактов'));
+						reject(new Error('Исполнитель должен быть из списка контактов'));
 					}
 				}
 				resolve();
 			}
 		})
 	}).then(function() {
-			console.log('Check users is OK');
+			console.info('checkUsers is OK');
 			return true;
 	}, function(err) {
-		console.log('Check users error: ' + err.message);
+		console.error('checkUsers error: ' + err.message);
 		return false;
 	});
 }
 
 myTask.prototype.checkPermissions = function() {
-	console.log('Тут проверяются разрешения на удаление');
+	console.info('Тут проверяются разрешения на удаление');
 	return true;
 }
 
 myTask.prototype.checkThis = function(cb) {							//тут собрать вместе все проверки на дату, на родителя, и пускать задачу дальше только если все ок
 	var self = this;																			//можно передавать массив в качестве аргумента, чтоб можно было проверять каждый раз свои данные
+	console.info('myTask.checkThis func');
 	Promise.all([self.checkParent(), self.checkType(), self.checkUsers()]).then(function(resultArray) {
 		console.log(resultArray);
 		for(var i = 0; i < resultArray.length; i++) {
 			if(resultArray[i] !== true ) {
-				cb(new Error('Check this find error'));
+
+				cb(new Error('checkThis find error'));
 				break;
 			} else if(i == (resultArray.length-1)) {
-				console.log('Check this is OK');
+				console.info('checkThis is OK');
 				self.name = new Buffer(self.name).toString('base64');
-				// console.log(self);
 				cb(null, self);
 			}
 		}
@@ -174,12 +182,15 @@ myTask.prototype.checkThis = function(cb) {							//тут собрать вме
 }
 
 myTask.prototype.add = function(cb) {
+	console.info('myTask.add func');
 	this.checkThis(function(err, task) {
 		if(err) {
+			console.error('myTask.add: ', err);
 			cb(err);
 		} else {
 			db.addTask(task, function(err, result) {
 				if(err) {
+					console.error('myTask.add addTask ', err);
 					cb(err);
 				} else {
 					cb(null, result);
@@ -192,7 +203,7 @@ myTask.prototype.add = function(cb) {
 myTask.prototype.update = function() {
 	this.checkThis(function(err, task) {
 		if(err) {
-			console.log(err.message);
+			console.info(err.message);
 		} else {
 			db.updateTask(task, function(err, result) {
 				if(err) {
