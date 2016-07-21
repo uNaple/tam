@@ -297,10 +297,10 @@ function getTask(id, cb) {
 	})
 }
 
-function getTasks(cb) {
+function getTasks(string, cb) {
 	console.info('getTasks func');
 	connectDB(function(client) {
-		var query = `SELECT * FROM tasks WHERE status != 7 ORDER BY id ASC`;
+		var query = `SELECT * FROM tasks WHERE ${string} ORDER BY id ASC;`;
 		client.query(query, function(err, result) {
 			if(err) {
 				cb(err);

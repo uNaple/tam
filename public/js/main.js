@@ -4,12 +4,14 @@ var xhr = new XMLHttpRequest();
 $(document).ready(function() {
 
 //======== Добавление задачи
-	$('#buttonAdd').on('click', function(event) {
+	$('#buttonAddTask').on('click', function(event) {
 	 	//console.debug(e);
-	 	Custombox.open({
-          target: '#tableAdd',
-          effect: 'slip'
-      });
+	 	// alert(event);
+	 	$('#panelTaskEdit').show();
+	 	// Custombox.open({
+   //        target: '#formAddTask',
+   //        effect: 'slip'
+   //    });
     event.preventDefault();
   	// $('#tableAdd').show();
   	// $('#tableAdd').hide();
@@ -39,54 +41,77 @@ $(document).ready(function() {
 					console.debug(result);
   			}
   			// $('#par1').append(result);
-  	})
+  	});
   	// $('#par1').load('addTask', data));
   	Custombox.close();
   });
 
 //======== Отображение задач
-	var arrTasks = new Array();//здесь хранятся задачи, потом редиска будет
+	var allTasks = new Array(),//здесь хранятся задачи, потом редиска будет
+			myTasks = new Array();
 
-	$('#buttonHide').click(function() {
-			$('#listTask').hide();
-			$('#buttonShow').show();
-			$('#buttonHide').hide();
-			arrTasks.splice(0,arrTasks.length);//временно, потом протухать будет по времени или по добавлению нвоой задачи
-			$('#listTask').empty();//и очищаю элементы листа
-			console.debug('arrTasks:', arrTasks);
-			console.debug('arrTasks.length:', arrTasks.length);
-  	});
+	// $('#buttonHide').click(function() {
+	// 		$('#listTask').hide();
+	// 		$('#buttonShow').show();
+	// 		$('#buttonHide').hide();
+	// 		arrTasks.splice(0,arrTasks.length);//временно, потом протухать будет по времени или по добавлению нвоой задачи
+	// 		$('#listTask').empty();//и очищаю элементы листа
+	// 		console.debug('arrTasks:', arrTasks);
+	// 		console.debug('arrTasks.length:', arrTasks.length);
+ //  	});
 
-	$('#buttonShow').click(function() {
-		if(!checkTasksExist(arrTasks)) {
-			xhr.open('GET', '/getTasks', true);
+	$('#buttonMyTasks').click(function() {
+			var params = 'director=' + encodeURIComponent(679); //тут id из сессии
+			if(!checkTasksExist(myTasks)) {
+				xhr.open('GET', '/getTasks?str=' + params, true);
+				xhr.send();
+				xhr.onreadystatechange = function() {
+				  if(xhr.readyState != 4)	return;
+				  if(xhr.status != 200) {
+				    alert(xhr.status + ': ' + xhr.statusText);
+				  } else {
+				  	myTasks = JSON.parse(xhr.responseText);
+				  	console.debug('myTasks: ', myTasks);
+				  	$('#fieldTasks tbody').empty();
+				  	showAll(myTasks);
+					}
+				}
+			} else {
+				$('#fieldTasks tbody').empty();
+				showAll(myTasks);
+			}
+	});
+
+
+	$('#buttonAllTasks').click(function() {
+		var params = 'status !=7'; //тут id из сессии
+		if(!checkTasksExist(allTasks)) {
+			xhr.open('GET', '/getTasks?str=' + params, true);
 			xhr.send();
 			xhr.onreadystatechange = function() {
 			  if(xhr.readyState != 4)	return;
 			  if(xhr.status != 200) {
 			    alert(xhr.status + ': ' + xhr.statusText);
 			  } else {
-			  	arrTasks = JSON.parse(xhr.responseText);
-			  	console.debug('arrTasks: ', arrTasks);
-			  	showAll(arrTasks);
+			  	allTasks = JSON.parse(xhr.responseText);
+			  	console.debug('allTasks: ', allTasks);
+			  	showAll(allTasks);
 			  	// console.debug(JSON.parse(xhr.responseText));
 				}
 			}
 		} else {
-			showAll(arrTasks);
+			showAll(allTasks);
 		}
-		$('#buttonShow').hide();
-		$('#buttonHide').show();
-	})
+	});
 
 
 //======== Вспомогательные функции
 
 //Подгрузка списков
 
-	$('#taskName').one('focus', function(event) {
-		getExtra();
-	})
+	// $('#taskName').one('focus', function(event) {
+	// 	getExtra();
+	// })
 	// $('#buttonAdd').one('click', getExtra());
 	function getExtra() {
 		$.get('getExtra', function (result) {
@@ -123,21 +148,23 @@ $(document).ready(function() {
 			return false;
 		}
 	}
-
+//Отображение листа с задачами. Перевести его в таблицу!
 	function showAll(arr) {
-		console.debug('show all',arr);
+		$('#fieldTasks tbody').empty();
+		// console.debug('show all',arr);
 		for(var i = 0; i <  arr.length; i++) {
-			var task = '';
-			for(var key in arr[i]) {
-				if(arr[i][key] !== null) {
-					task += arr[i][key] + ' ';
-				}
-			}
-			console.debug('current task:', task);
-			$('#listTask').append('<li class="list-group-item">' + task);
+			// var task = '';
+			// for(var key in arr[i]) {
+			// 	if(arr[i][key] !== null) {
+			// 		task += arr[i][key] + ' ';
+			// 	}
+			// }
+			// console.debug('current task:', task);
+			$('#fieldTasks tbody').append('<tr><td>' + arr[i].name);
 		}
-		$('#listTask').show();
+		// $('#listTask').show();
 	}
+
 });
 
 	// $('#input1').click(function() {

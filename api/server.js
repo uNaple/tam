@@ -48,11 +48,25 @@ app.get('/', function (req, res) {
   console.info('Request to /');
 });
 
+app.get('/123', function (req, res) {
+  res.render('temp1', {
+  						title: 		'tm',
+  });
+  console.info('Request to /123');
+});
+
 app.get('/getTasks', function (req, res) {
-	// console.log('req task with id=',req.query.id);
+	console.log('id:',req.query.str);
 	// console.log(req);
+	// var string = req.query.id + ;
 	console.info('Request to /getTasks');
-	db.getTasks(function(err, result) {
+	// if(req.query.id) {
+	// 	string = 'id=' + req.query.id ;
+	// } else {
+	// 	string =' id != 7';
+	// }
+	db.getTasks(req.query.str, function(err, result) {
+		// console.log(string);
 		if(err) {
 			console.error('getTasks: ', err);
 			res.send(err);
