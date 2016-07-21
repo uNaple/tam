@@ -1,0 +1,89 @@
+h1 {
+	font-size: 50px;
+}
+
+body {
+    min-width: 400px;
+    margin: 0;
+    padding: 0;
+    font-family: arial, sans-serif;
+    font-size: 14px;
+    text-align: center;
+    background: #738D9E;
+    display: inline-block;
+}
+
+.menubut {
+    display:inline-block;
+    float:left;
+    width: 200px;
+    border-bottom: none;
+    margin: 0;
+}
+
+.main {
+    /*background: #009383; /* Цвет фона */*/
+    color: #fff; /* Цвет текста */
+    display: inline-block;
+    /*text-align: center;  Выравнивание по центру */
+    /*width: 30%;*/
+    /*float:left;*/
+    /*margin: 1px;*/
+    /*padding: 0px;*/
+}
+
+.testclass {
+    background: #009383; /* Цвет фона */
+    color: #fff; /* Цвет текста */
+    text-align: center; /* Выравнивание по центру */
+}
+/*
+.button {
+	border: 1px solid #BBD3AE;
+    width: 140px;
+    float: left;
+    display: inline-block;
+    padding: 1px 1px;
+    text-decoration: none;  Убираем подчёркивание
+    color: #322;
+}*/
+
+/*.button:hover {
+	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    background: linear-gradient(to bottom, #fcfff4, #e9e9ce);
+    color: #a00;
+
+}*/
+.button15 {
+  color: #fff; /* цвет текста */
+  text-decoration: none; /* убирать подчёркивание у ссылок */
+  user-select: none; /* убирать выделение текста */
+  background: #151719; /* фон кнопки */
+  padding: .1em 1.5em; /* отступ от текста */
+  outline: none; /* убирать контур в Mozilla */
+  height: 30px;
+  width: 200px;
+}
+
+.button15:hover { background: #546575; } /* при наведении курсора мышки */
+.button:active { background: rgb(152,15,0); } /* при нажатии */
+
+.block1 {
+    width: 260px;
+    background: #222;
+    padding: 5px;
+    float: center;
+    text-align: center;  Выравнивание по центру
+
+}
+
+.addform {
+    width: auto;
+    /*margin-left: 30px;
+    padding-right: 30px;
+    align-self: center;*/
+}
+
+.showform {
+
+}

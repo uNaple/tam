@@ -4,6 +4,7 @@ var myTask = require('./object').myTask;
 var config 	= require('../config/config.js'),
 		express = require('express'),
 		app 		= express(),
+		Promise = require('bluebird'),
 		path		= require('path'),
 		bodyParser 	= require('body-parser'),
 		db = require('../modules/db'),
@@ -47,10 +48,10 @@ app.get('/', function (req, res) {
   console.info('Request to /');
 });
 
-app.get('/showAll', function (req, res) {
+app.get('/getTasks', function (req, res) {
 	// console.log('req task with id=',req.query.id);
 	// console.log(req);
-	console.info('Request to /showAll');
+	console.info('Request to /getTasks');
 	db.getTasks(function(err, result) {
 		if(err) {
 			console.error('getTasks: ', err);
@@ -61,26 +62,102 @@ app.get('/showAll', function (req, res) {
 	})
 })
 
-app.get('/getExtra', function (req, res){
+function getUsers() {	//проверка на права пользователя
+	return new Promise(function(resolve, reject) {
+		db.getUsers('id, name', function(err, result) {
+			if(err) {
+				console.info(err);
+				reject(err);
+			} else {
+				var res = new Object();
+				res.Users = result;
+				// console.log(res);
+				resolve(res);
+			}
+		});
+	}).then(function(result) {
+		return result;
+		console.log(result);
+	}, function(err) {
+		return false;
+	})
+}
+
+function getTasks() {
+	return new Promise(function(resolve, reject) {
+		db.getTasks(function(err, result) {
+			if(err) {
+				console.info(err);
+				reject(err);
+			} else {
+				var res = new Object();
+				res.Tasks = result;
+				resolve(res);
+			}
+		});
+	}).then(function(result) {
+		return result;
+	}, function(err) {
+		return false;
+	})
+}
+
+function getTypes() {
+	return new Promise(function(resolve, reject) {
+		db.getTypes(function(err, result) {
+			if(err) {
+				reject(err);
+				console.info(err);
+			} else {
+				var res = new Object();
+				res.Types = result;
+				resolve(res);
+			}
+		})
+	}).then(function(result) {
+		return result;
+	}, function(err) {
+		return false;
+	})
+}
+
+function getStatus() {
+	return new Promise(function(resolve, reject) {
+		db.getStatus(function(err, result) {
+			if(err) {
+				reject(err);
+				console.info(err);
+			} else {
+				var res = new Object();
+				res.Status = result;
+				resolve(res);
+			}
+		})
+	}).then(function(result) {
+		return result;
+	}, function(err) {
+		return false;
+	})
+}
+
+app.get('/getExtra', function (req, res) {
 	console.info('Request to /getExtra');
-	db.getUsers('id, name', function(err, result) {
-		if(err) {
-			console.info(err);
-		} else {
-			// console.log(JSON.stringify(result));
-			res.send(JSON.stringify(result));
+	var resList = new Object();
+	Promise.all([getUsers(), getTasks(), getTypes(), getStatus()]).then(function(resultArray) {
+		// console.info(resultArray);
+		for(var i in resultArray) {
+			if(resultArray[i] == false) {
+				break;
+				console.err('err');
+			} else {
+				// console.info(resultArray[i]);
+			}
 		}
+		res.send(JSON.stringify(resultArray));
 	})
 })
 
-
 app.post('/addTask', function (req, res) {
-	// console.log('req task with id=',req.query.id);
-	// console.log(req);
-	// console.log(req.body);//проверяю, добавляю в бд, и шлю ответ с результатом
-	// res.send(JSON.stringify(req.body));
-	// console.log(req.body);
-	// console.log(task);
 	console.info('Request /addTask');
 	var task = new myTask(req.body);
 	task.add(function(err, result) {
@@ -94,11 +171,4 @@ app.post('/addTask', function (req, res) {
 			res.send(JSON.stringify(text));
 		}
 	});
-		// db.addTask(function(err, result) {
-	// 	if(err) {
-	// 		res.send(err);
-	// 	} else {
-	// 		res.send(JSON.stringify(result));
-	// 	}
-	// })
 })

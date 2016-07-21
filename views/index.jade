@@ -1,0 +1,123 @@
+doctype html
+html
+	head
+		title #{title}
+		link(rel="stylesheet" href="/css/bootstrap.min.css")
+		link(rel="stylesheet" href="/css/bootstrap.css")
+		link(rel="stylesheet" href="/css/custombox.min.css")
+		//- link(rel="stylesheet" href="/css/style.css")
+	body
+		nav.navbar.navbar-default(role='navigation')
+			.container-fluid
+				.navbar-header
+					button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+						span.sr-only Toggle navigation
+						span.icon-bar
+						span.icon-bar
+						span.icon-bar
+					a.navbar-brand(href='#') 1x
+				#bs-example-navbar-collapse-1.collapse.navbar-collapse
+					ul.nav.navbar-nav
+						li
+							a(href='#') Link
+						li
+							a(href='#') Link
+						li.dropdown
+							a.dropdown-toggle(aria-expanded='false', href='#', data-toggle='dropdown', data-replace-tmp-key='6be2458a7786d2dfdb6b72d7583e8104')
+								os-p(key='6be2458a7786d2dfdb6b72d7583e8104')
+									| Выпадающее меню
+									span.caret
+							ul.dropdown-menu(role='menu')
+								li
+									a(href='#', data-replace-tmp-key='004bf6c9a40003140292e97330236c53')
+										os-p(key='004bf6c9a40003140292e97330236c53') Действие
+								li
+									a(href='#', data-replace-tmp-key='c396653502927eea9f0fc260a1465518')
+										os-p(key='c396653502927eea9f0fc260a1465518') Другое действие
+								li
+									a(href='#', data-replace-tmp-key='71e7f655e2bbd0d97e8c376a4ed5af03')
+										os-p(key='71e7f655e2bbd0d97e8c376a4ed5af03') Еще что-нибудь
+								li.divider
+								li.dropdown-header(data-replace-tmp-key='98b396110915919be9b53f0c37aaafda')
+									os-p(key='98b396110915919be9b53f0c37aaafda') Nav header
+								li
+									a(href='#', data-replace-tmp-key='112cd6710bd31b37dd32719c2d37191e')
+										os-p(key='112cd6710bd31b37dd32719c2d37191e') Отдельная ссылка
+								li
+									a(href='#', data-replace-tmp-key='0006e15256c2d7dba40f61bd9956ec60')
+										os-p(key='0006e15256c2d7dba40f61bd9956ec60') Еще одна отдельная ссылка
+					form.navbar-form.navbar-left(role='search')
+						.form-group
+							input.form-control(type='text', placeholder='Search')
+						button.btn.btn-default(type='submit') Submit
+						button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+							span.sr-only Toggle navigation
+							span.icon-bar
+							span.icon-bar
+							span.icon-bar
+					#navbar.navbar-collapse.collapse
+						a.navbar-brand(href='#') Task Manager
+						form.navbar-form.navbar-right
+							.form-group
+								input.form-control(type='text', placeholder='Email')
+							.form-group
+								input.form-control(type='password', placeholder='Password')
+							button.btn.btn-success(type='submit') Sign in
+						ul.nav.navbar-nav.navbar-right
+							li
+								a(href='#') Link
+							li.dropdown
+								a.dropdown-toggle(href='#', data-toggle='dropdown')
+									| Dropdown
+									span.caret
+								ul.dropdown-menu(role='menu')
+									li
+										a(href='#') Action
+									li
+										a(href='#') Another action
+									li
+										a(href='#') Something else here
+									li.divider
+									li
+										a(href='#') Separated link
+		.row
+			.col-md-2.col-sm-3.sidebar
+				aside.main-sidebar
+					ul.nav.nav-pills.nav-stacked
+						li
+							a#buttonShow(href='#') Показать
+						li
+							a#buttonHide(href='#') Скрыть
+						li
+							a(href='#') Analytics
+						li
+							a(href='#') Export
+						li
+							a(href='') Nav item
+						li
+							a(href='') Nav item again
+						li
+							a(href='') One more nav
+						li
+							a(href='') Another nav item
+						li
+							a(href='') More navigation
+			.col-md-10.col-sm-3.main
+				.container-fluid
+					.jumbotron
+						ul#listTask.list-group
+							.container
+								.row
+									hr
+		footer
+			p © 2016 Insystem, Inc.
+				//- Bootstrap core JavaScript
+		//- script(src='jquery-3.0.0.min.js')
+		script(src='http://code.jquery.com/jquery-1.9.1.js')
+		script(src='/js/custombox.min.js')
+		script(src='/js/bootstrap.min.js')
+		script(src='/js/bootstrap.js')
+		script(src='/js/main.js')
+
+		//- script(src='//getbootstrap.com/examples/navbar-static-top/../../dist/js/bootstrap.min.js')
+

@@ -135,7 +135,7 @@ function print() {
 	// 	}
 	// })
 	// testAdd(10);
-	testUpdate(1);
+	// testUpdate(1);
 	// var str = 'hyi';
 	// var int = 1+3;
 	// var task1 = new Object();

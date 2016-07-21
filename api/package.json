@@ -5,6 +5,7 @@
   "dependencies": {
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "bootstrap": "^3.3.6",
     "console-stamp": "^0.2.2",
     "express": "^4.13.4",
     "http": "0.0.0",

@@ -1,0 +1,92 @@
+doctype html
+html
+	head
+		title #{title}
+		link(rel="stylesheet" href="/css/bootstrap.min.css")
+		link(rel="stylesheet" href="custombox.min.css")
+	body
+
+		h1 tm
+		p#par1 Info place
+		.menubut
+			input#buttonHide.button15(type="button", align='center', hidden='true', value="Скрыть задачи")
+			input#buttonShow.button15(type="button", align='center',  value="Показать задачи")
+			input#buttonAdd.button15(type="button", value="Добавить задачу", align='center')
+		.main
+			datalist#taskUsers
+			datalist#taskTypes
+			datalist#taskStatus
+			textarea#text1.showform(type='text', align='center', hidden=true, readonly=true)
+			table#tableAdd.addform(border='1', cellpadding='7', hidden=true)
+					tr
+						td(align='center', colspan='2', bgcolor="#FBF0DB") Добавление задачи
+					tr
+						td(colspan='1', bgcolor='#D3EDF6', align='center') Заголовок
+						td
+							input#taskName(type='text', name='name')
+					tr
+						td(colspan='1', bgcolor='#D3EDF6', align='center') Тип
+						td
+							input#taskType(type='text', name='type', list='taskTypes')
+					tr
+						td(colspan='1', bgcolor='#D3EDF6', align='center') Постановщик
+						td
+							input#taskDirector(type='text', name='director', list='taskUsers')
+					tr
+						td(colspan='1', bgcolor='#D3EDF6', align='center') Контроллер
+						td
+							input#taskController(type='text', name='controller', list='taskUsers')
+					tr
+						td(colspan='1', bgcolor='#D3EDF6', align='center') Исполнитель
+						td
+							input#taskExecutor(type='text', name='executor', list='taskUsers')
+					tr
+						td(colspan='1', bgcolor='#D3EDF6', align='center') Статус
+						td
+							input#taskStatus(type='text', name='status', list='taskStatus')
+					tr
+						td(align='right', colspan='2')
+							input#tableButtonAdd.button15(type='button', value='Добавить', align='right')
+							input#tableButtonCancel.button15(type='button', value='Отмена', align='right')
+
+			//- tr
+			//- 	td(align='left')
+			//- 		form(method='get', action='/showall')
+			//- 			input(type='submit', value='Показать все задачи')
+			//- tr
+			//- 	td(align='left')
+			//- 		form(method='get', action='/add')
+			//- 			input(type='submit', value='Добавить новую задачу')
+			//- tr
+			//- 	td
+			//- 		form(method='post',action='/show')
+			//- 			input(type='submit', value='Показать по id')
+			//- 			input(type='text', name='id')
+			//- 		a(class = error ? "visible" : "hidden")
+			//- 		td
+			//- 			p #{error}
+			//- tr
+			//- 	td(align='left')
+			//- 		form(method='get', action='/showusers')
+			//- 			input(type='submit', value='Показать всех пользователей')
+			//- tr
+			//- 	td
+			//- 		form(method='post', action='/login')
+			//- 			input(type='submit', value='Авторизация')
+			//- 			input(type='text', name='username')
+			//- 			input(type='text', name='password')
+
+
+			//- tr
+			//- 	td(align='left')
+			//- 		form(method='post', action='/adduser')
+			//- 			input(type='submit', value='Добавить нового пользователя')
+			//- 			input(type='text', name='userName')
+			//- tr
+			//- 	td(align='left')
+			//- 		form(method='get', action='/showUsers')
+			//- 			input(type='submit', value='Показать пользователей')
+		script(src='jquery-3.0.0.min.js')
+		script(src="custombox.min.js")
+		script(src='bootstrap.min.js')
+		script(src='main.js')

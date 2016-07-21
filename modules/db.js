@@ -70,7 +70,7 @@ function addTypeAction(val) {
 		})
 	})
 }
-//=============Основные объекты ====Добавление
+//============= Основные объекты ==== Добавление
 function addUser(user) {														//добавить пользователя
 connectDB(function(client){
 		var query = `INSERT INTO users(name, password, email, global_permission, group_permission)
@@ -90,18 +90,27 @@ connectDB(function(client){
 }
 
 function addTask(task, cb) {
-	console.log(task);
+	console.info('db.addTask\n', task);
 	connectDB( function (client) {			//подключаемся и создаем запрос
-		var queryHead = `INSERT INTO tasks(name, type, director, controller, time_add, status`,
+		var queryHead = `INSERT INTO tasks(name, director, time_add`,
 				queryTail = `VALUES(convert_from(decode('${task.name}', 'base64'), 'UTF-8'),
-													 	'${task.type}',
-														'${task.director}',
-														'${task.controller}',
-														'${getNowDate()}',
-														'${task.status}'`;
+																								'${task.director}',
+																								'${getNowDate()}'`
+		if(task.status !== null) {
+			queryHead += ', status';
+			queryTail += `, '${task.status}'`;
+		}
+		if(task.controller !== null) {
+			queryHead += ', controller';
+			queryTail += `, '${task.controller}'`;
+		}
 		if(task.executor !== null) {
 			queryHead += ', executor';
 			queryTail += `, '${task.executor}'`;
+		}
+		if(task.type !== null) {
+			queryHead += ', type';
+			queryTail += `, '${task.type}'`;
 		}
 		if(task.time_start !== null) {
 			queryHead += ', time_start';
@@ -133,16 +142,18 @@ function addTask(task, cb) {
 		}
 		queryHead += ')';
 		queryTail += ')';
-		var queryFinal = queryHead + queryTail + ' RETURNING id, name;';
-		console.log(queryFinal);
+		var queryFinal = queryHead + queryTail.replaceAll('\t|\n|\n\r', '') + ' RETURNING id, name;';
+		console.info('db query\n', queryFinal);
 		client.query(queryFinal, function(err, result) {						//отправляем запрос
 	    if(err) {
-	    	cb(err)
+	    	cb(err);
+	    	console.log(err);
 	    } else {
-	    	cb(null, result.rows);
 				var text = 'Задача ' + result.rows[0].name + ' с id: ' + result.rows[0].id + ' добавлена';
+	    	cb(null, result.rows);
 	    	console.log(text);
 	    }
+	    client.end();
 		});
 	});
 }
@@ -154,7 +165,7 @@ function addTask(task, cb) {
 // 	})
 // }
 
-//=============Обновления
+//============= Обновления
 function updateTask (task, cb){                      							//обновить задание
 	connectDB(function(client) {																		//как обновлять, хранить ли обновленные поля, чтоб не апдейтить все?
 		var query = `UPDATE tasks	SET `;
@@ -209,6 +220,7 @@ function updateTask (task, cb){                      							//обновить �
 			    } else {
 			    	cb(null)
 			    }
+			    client.end();
 			});
 		// var text = 'Задача с id: ' + `${obj.id}` + ' изменена';
 		// addHistory(client, text, typeOfAction[3]); 	//добавляем в историю
@@ -234,7 +246,7 @@ function updateTask (task, cb){                      							//обновить �
 // 	})
 // }
 
-//============Получение
+//============ Получение
 function getUser(id, cb) {
 	connectDB(function(client) {
 		var query = `SELECT * FROM users WHERE id = ${id}`;
@@ -247,22 +259,85 @@ function getUser(id, cb) {
 			} else {
 				cb(null, result.rows);
 			}
+			client.end();
+		})
+	})
+}
+
+function getUsers(str, cb) {			//str строка для выборки, указываем то что надо выбрать
+	console.info('getUsers func');
+	connectDB(function(client) {
+		var query = `SELECT ${str} FROM users;`;
+		client.query(query, function(err, result) {
+			if(err) {
+				cb(err);
+			} else {
+				cb(null, result.rows);
+				// console.log(result.rows);
+			}
+			client.end();
 		})
 	})
 }
 
 function getTask(id, cb) {
+	console.info('getTask with', id);
 	connectDB(function(client) {
 		var query = `SELECT * FROM tasks WHERE id = ${id}`;
 		client.query(query, function(err, result) {
 			if (err) {
-				console.log(err);
 				cb(err);
 			} else if (result.rows.length == 0) {
 				cb(new Error('Нет задачи с таким id'));
 			} else {
 				cb(null, result.rows);
 			}
+			client.end();
+		})
+	})
+}
+
+function getTasks(cb) {
+	console.info('getTasks func');
+	connectDB(function(client) {
+		var query = `SELECT * FROM tasks WHERE status != 7 ORDER BY id ASC`;
+		client.query(query, function(err, result) {
+			if(err) {
+				cb(err);
+			} else {
+				cb(null, result.rows);
+			}
+			client.end();
+		})
+	})
+}
+
+function getTypes(cb) {
+	console.info('getTypes func');
+	connectDB(function(client) {
+		var query = `SELECT * FROM type ORDER BY id ASC`;
+		client.query(query, function(err, result) {
+			if(err) {
+				cb(err);
+			} else {
+				cb(null, result.rows);
+			}
+			client.end();
+		})
+	})
+}
+
+function getStatus(cb) {
+	console.info('getStatus func');
+	connectDB(function(client) {
+		var query = `SELECT * FROM status ORDER BY id ASC`;
+		client.query(query, function(err, result) {
+			if(err) {
+				cb(err);
+			} else {
+				cb(null, result.rows);
+			}
+			client.end();
 		})
 	})
 }
@@ -278,23 +353,12 @@ function getChildren(id, cb) {
 				// console.log(result)
 				cb(null, result);
 			}
+			client.end();
 		})
 	})
 }
 
-function getUsers(str, cb) {			//str строка для выборки, указываем то что надо выбрать
-	connectDB(function(client) {
-		var query = `SELECT ${str} FROM users;`;
-		client.query(query, function(err, result) {
-			if(err) {
-				cb(err);
-			} else {
-				cb(null, result.rows);
-			}
-		})
-	})
-}
-
+//==== вспомогательные
 function getNowDate(){
 	var objToday = new Date(),
        	curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
@@ -304,7 +368,12 @@ function getNowDate(){
 	return today;                       //текущая дата в формате timestamp without time zone
 }
 
-//=================Удаление
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
+//================= Удаление
 function deleteTask(id, cb) {
 	connectDB(function(client) {
 		var query = `UPDATE tasks SET status = '7' WHERE id = ${id}`;
@@ -329,9 +398,12 @@ module.exports = {
 	addTask: 				addTask,
 	updateTask: 		updateTask,
 	getTask: 				getTask,
+	getTasks: 			getTasks,
 	getUser: 				getUser,
 	getUsers: 			getUsers,
 	getChildren: 		getChildren,
+	getTypes: 			getTypes,
+	getStatus: 			getStatus,
 	getNowDate: 		getNowDate,
 	deleteTask: 		deleteTask
 }
