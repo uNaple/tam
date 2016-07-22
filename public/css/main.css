@@ -1,12 +1,12 @@
-@font-face {
+/*@font-face {
     font-family: 'Open Sans';
     font-style: normal;
     font-weight: 400;
     src: local('Open Sans'), local('OpenSans'), url("OpenSans-Regular.ttf") format('truetype'), url("OpenSans.woff") format('woff');
-}
+}*/
 
 html, body {
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     height: 100%;
 }
 
@@ -17,6 +17,8 @@ ul#nav {
 body>div.container, body>.custombox-container>div.container {
     margin-top: 79px;
 }
+
+
 
 .bs-callout {
     padding: 20px;
@@ -534,4 +536,26 @@ form.create:first-of-type {
     background-color: #e4e9ed;
     color: #54595d;
     padding: 10px 15px 15px 15px
+}
+
+.taskedit {
+    /*background-color: rgba(0,0,0,.1);*/
+    outline: none;
+    min-height: 1.5em;
+}
+
+.flexrow {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: flex-start;
+}
+.flexrow * {
+    flex: 0 1 auto;
+    align-self: auto;
+}
+.flexrow .taskedit {
+    flex: 1 1 auto;
 }

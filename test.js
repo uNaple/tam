@@ -119,7 +119,7 @@ function testUpdate(id) {
 
 }
 
-
+db.getTasks();
 function print() {
 // var director = '3';
 	// db.getUsers('*', function(err, result) {

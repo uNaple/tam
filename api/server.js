@@ -56,17 +56,16 @@ app.get('/123', function (req, res) {
 });
 
 app.get('/getTasks', function (req, res) {
-	console.log('id:',req.query.str);
-	// console.log(req);
-	// var string = req.query.id + ;
+	var params = [], where = '';
+	// console.log('str:',req.query.str);
+	for (var key in req.query) {
+		if (where.length > 0) where += ' AND ';
+		params.push(req.query[key]);
+		where += key + '= $' + params.length;
+	}
+	console.warn('WHERE STRING: "'+where+'" with VALUES ', params);
 	console.info('Request to /getTasks');
-	// if(req.query.id) {
-	// 	string = 'id=' + req.query.id ;
-	// } else {
-	// 	string =' id != 7';
-	// }
-	db.getTasks(req.query.str, function(err, result) {
-		// console.log(string);
+	db.getTasks(where, params, function(err, result) {
 		if(err) {
 			console.error('getTasks: ', err);
 			res.send(err);
@@ -157,7 +156,7 @@ function getStatus() {
 app.get('/getExtra', function (req, res) {
 	console.info('Request to /getExtra');
 	var resList = new Object();
-	Promise.all([getUsers(), getTasks(), getTypes(), getStatus()]).then(function(resultArray) {
+	Promise.all([getUsers()]).then(function(resultArray) {
 		// console.info(resultArray);
 		for(var i in resultArray) {
 			if(resultArray[i] == false) {

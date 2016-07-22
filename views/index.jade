@@ -6,12 +6,14 @@ html
 		title tm (torgovaya marka)
 		link(href='/css/bootstrap.min.css', rel='stylesheet')
 		link(href='/css/main.css', rel='stylesheet')
+		link(href='/css/AdminLTE.min.css', rel='stylesheet')
+		link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css')
+		link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css')
 	body
 		nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
 			.container-fluid
 				.navbar-header
 					a.btn.navbar-toggle.collapsed()
-						| Выдох
 					a.navbar-brand()
 				ul.nav.navbar-nav.navbar-right.hidden-xs
 					li
@@ -51,29 +53,73 @@ html
 								| Что-то
 				.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
 					h3 Мои задачи
-					p
-						button#buttonAddTask.btn.btn-default.btn-sm(type='button') Добавить
 					.row
 						.col-md-5.col-sm-12
-							h4 Проект 1
-							table#fieldTasks.table.table-hover.table-condensed.users
-								thead
-									tr
-										th разбивка на секции внутри проекта
-								tbody
-						.col-md-2.col-sm-12
-						.col-md-5.col-sm-12
+							h4.box-title
+								.box-tools.pull-right
+									ul.pagination.pagination-sm.inline
+										li
+											a(href='#') «
+										li
+											a(href='#') 1
+										li
+											a(href='#') 2
+										li
+											a(href='#') 3
+										li
+											a(href='#') »
+							button#buttonAddTask1.btn.btn-default(type='button')
+								i.fa.fa-plus
+								| Add task
+							.box.box-primary(style='position: relative; left: 0px; top: 0px;')
+									.box-header.ui-sortable-handle(style='cursor: move;')
+										i.ion.ion-clipboard
+									.box-body
+										ul#listTasks.todo-list.ui-sortable
+									.box-footer.clearfix.no-border
+										button#buttonAddTask2.btn.btn-default.pull-right(type='button')
+											i.fa.fa-plus
+											|  Add task
+						.col-md-1.col-sm-12
+						.col-md-6.col-sm-12
+							.info-box.bg-red
+								span.info-box-icon
+									i.fa.fa-calendar
+								.info-box-content
+									span.info-box-text Tasks
+									span.info-box-number 14 88
+									// The progress section is optional
+									.progress
+										.progress-bar(style='width: 70%')
+									span.progress-description
+										| 70% Increase in 30 Days
 							.jumbotron
 								form#panelTaskEdit(hidden='true', role='form')
-									.form-group
-										label.sr-only(for='exampleInputEmail2') Email address
-										input#exampleInputEmail2.form-control(placeholder='Тип задачи')
-									.form-group
-										.input-group
-											input.form-control(placeholder='Постановщик')
-									.form-group
-										label.sr-only(for='exampleInputPassword2') Password
-										input#exampleInputPassword2.form-control(placeholder='Описание')
+
+
+
+									.box.box-default
+										.box-header.with-border
+											.box-tools.pull-right
+												button.btn.btn-box-tool(type='button', data-widget='collapse')
+													i.fa.fa-minus
+												button.btn.btn-box-tool(type='button', data-widget='remove')
+													i.fa.fa-remove
+										// /.box-header
+										.box-body
+											.row
+												.col-md-6
+													.form-group
+														label Users
+														select#listUsers.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;')
+															span.select2.select2-container.select2-container--default.select2-container--below(style='width: 100%;', dir='ltr')
+																span.selection
+																	span.select2-selection.select2-selection--single(aria-labelledby='select2-as73-container', tabindex='0', role='combobox', aria-haspopup='true', aria-expanded='false')
+																		span#select2-as73-container.select2-selection__rendered(title='Delaware') Delaware
+																		span.select2-selection__arrow(role='presentation')
+																			b(role='presentation')
+																span.dropdown-wrapper(aria-hidden='true')
+
 								h4 Статистика
 								p
 									| Текущая длительность (тут надпись проекта или задачи ):
@@ -84,10 +130,15 @@ html
 									.progress-bar(role='progressbar', aria-valuenow='70', aria-valuemin='0', aria-valuemax='100', style='width: 70%;', title='сколько то процентов в зависимсти от выполненых задач распределенных по времени')
 										| 70%
 		script(src='/js/jquery-2.2.3.min.js')
+		script(src='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js')
 		script(src='/js/custombox.min.js')
 		script(src='/js/bootstrap.min.js')
 		script(src='/js/bootstrap.js')
 		script(src='/js/main.js')
+		script(src='/js/app.js')
+		script(src='/js/pages/dashboard.js')
+		script(src="/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js")
+		script(src='/plugins/fastclick/fastclick.js')
 
 		//- script(src='//getbootstrap.com/examples/navbar-static-top/../../dist/js/bootstrap.min.js')
 

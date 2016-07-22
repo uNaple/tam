@@ -297,11 +297,13 @@ function getTask(id, cb) {
 	})
 }
 
-function getTasks(string, cb) {
+function getTasks(where, params, cb) {
 	console.info('getTasks func');
+	// convert_from(decode('${string}', 'base64'), 'UTF-8')
 	connectDB(function(client) {
-		var query = `SELECT * FROM tasks WHERE ${string} ORDER BY id ASC;`;
-		client.query(query, function(err, result) {
+		var query = 'SELECT * FROM tasks WHERE '+ where +' ORDER BY id ASC;';
+		client.query(query, params, function(err, result) {
+			console.log(query);
 			if(err) {
 				cb(err);
 			} else {
