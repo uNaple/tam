@@ -156,7 +156,7 @@ function getStatus() {
 app.get('/getExtra', function (req, res) {
 	console.info('Request to /getExtra');
 	var resList = new Object();
-	Promise.all([getUsers()]).then(function(resultArray) {
+	Promise.all([getUsers(), getTypes(), getStatus()]).then(function(resultArray) {
 		// console.info(resultArray);
 		for(var i in resultArray) {
 			if(resultArray[i] == false) {

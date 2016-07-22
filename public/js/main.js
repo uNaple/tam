@@ -5,10 +5,10 @@ $(document).ready(function() {
 
 //======== Добавление задачи
 	$('#buttonAddTask1').on('click', function(event) {
-	 	$('#listTasks').prepend('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' );
+	 	$('#listTasks').prepend('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
   });
   $('#buttonAddTask2').on('click', function(event) {
-	 	$('#listTasks').append('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' );
+	 	$('#listTasks').append('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
   });
 
   $('.todo-list').click(function() {
@@ -21,26 +21,27 @@ $(document).ready(function() {
   	Custombox.close();
   });
 
-  $('#tableButtonAdd').click(function(event) {
-  	console.debug(event);
-  	var data = $('#tableAdd tr td input');
-  	var task = new Object();
-  	for(var i = 0; i < (data.length-2); i++) {
-  		task[$(data[i]).attr('name')] = $.trim($(data[i]).val());
-	 		console.debug(task);
-  	}
-  	event.preventDefault();
-  	$.ajax({
-  		url: 'addTask',
-  		method: 'POST',
-  		data: task,
-  		success: function(result) {
-	  			result = JSON.parse(result);
-	  			alert(result)
-					console.debug(result);
-  			}
-  	});
-  	Custombox.close();
+  $('#buttonTaskAdd').click(function(event) {
+  	console.debug($('#panelTaskEdit').html());
+
+  	// var data = $('#tableAdd tr td input');
+  	// var task = new Object();
+  	// for(var i = 0; i < (data.length-2); i++) {
+  	// 	task[$(data[i]).attr('name')] = $.trim($(data[i]).val());
+	 	// 	console.debug(task);
+  	// }
+  	// event.preventDefault();
+  	// $.ajax({
+  	// 	url: 'addTask',
+  	// 	method: 'POST',
+  	// 	data: task,
+  	// 	success: function(result) {
+	  // 			result = JSON.parse(result);
+	  // 			alert(result)
+			// 		console.debug(result);
+  	// 		}
+  	// });
+  	// Custombox.close();
   });
 
 //======== Отображение задач
@@ -98,27 +99,31 @@ $(document).ready(function() {
 	function getExtra() {
 		$.get('getExtra', function (result) {
 		 	var arr = JSON.parse(result);
+			// var data = [{ id: 0, text: 'enhancement' }, { id: 1, text: 'bug' }];
+		 	// console.debug(arr[0].Users);
+		 	$("#listUsers").select2();
+		 	$("#listTypes").select2();
+		 	$("#listStatus").select2();
 		 	for(var i in arr) {
 		 		if(arr[i].hasOwnProperty('Users')) {
 		 			for(var j in arr[i].Users) {
-						console.debug(arr[i].Users[j].name);
-		 				$('#listUsers').append('<option>'+arr[i].Users[j].name);
+		 				$('#listUsers').append('<option value='+ arr[i].Users[j].id +'>'+ arr[i].Users[j].name +'</option>');
 		 			}
 		 		}
-		 		// if(arr[i].hasOwnProperty('Types')) {
-		 		// 	for(var j in arr[i].Types) {
-		 		// 		$('#taskTypes').append('<option value='+ arr[i].Types[j].id + '>' + arr[i].Types[j].sign + '</option>');
-		 		// 		// console.debug(arr[i].Types[j]);
-		 		// 	}
-		 		// }
-		 		// if(arr[i].hasOwnProperty('Status')) {
-		 		// 	for(var j in arr[i].Status) {
-		 		// 		$('#taskStatus').append('<option value='+ arr[i].Status[j].id + '>' + arr[i].Status[j].sign + '</option>');
-		 		// 		// console.debug(arr[i].Types[j]);
-		 		// 	}
-		 		// }
+				if(arr[i].hasOwnProperty('Types')) {
+					for(var j in arr[i].Types) {
+						$('#listTypes').append('<option value='+ arr[i].Types[j].id + '>' + arr[i].Types[j].sign + '</option>');
+						// console.debug(arr[i].Types[j]);
+					}
+				}
+				if(arr[i].hasOwnProperty('Status')) {
+					for(var j in arr[i].Status) {
+						$('#listStatus').append('<option value='+ arr[i].Status[j].id + '>' + arr[i].Status[j].sign + '</option>');
+						// console.debug(arr[i].Types[j]);
+					}
+				}
 		 	}
-	  })
+		})
 	}
 
 //Проверка массива всех задач
