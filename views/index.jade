@@ -53,7 +53,7 @@ html
 							a()
 								| Что-то
 				.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-					h3 Мои задачи (статусное сообщение и сессия)
+					h3 Мои задачи
 					.row
 						.col-md-5.col-sm-12
 							h4.box-title
@@ -106,17 +106,16 @@ html
 										textarea#taskDescription.form-control(rows='3', placeholder='Описание ',  name='description')
 									.form-group
 										label Постановщик
-										input#taskDirector.form-control(name='director')
-										//- input#taskDirector.form-control(placeholder='Enter ...', type='text', name='director')
-										//- select#listUsers.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director', placeholder='director')
+										input#taskDirector.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director', list='listUsers')
+										datalist#listUsers
 									.form-group
 										label Тип
-										input#taskType.form-control(name='type')
-										//- select#listTypes.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')
+										input#taskType.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type', list='listTypes')
+										datalist#listTypes
 									.form-group
 										label Статус
-										input#taskStatus.form-control(name='status')
-										//- select#listStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status')
+										input#taskStatus.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status', list='listStatus')
+										datalist#listStatus
 									button#buttonTaskAdd.btn.btn-primary(type='button') Accept
 								h4 Статистика
 								p

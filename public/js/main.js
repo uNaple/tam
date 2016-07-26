@@ -59,6 +59,7 @@ $(document).ready(function() {
 		console.debug('task add click');
 		var data = $('#panelTaskEdit [name]');
 		var task = new Object();
+		console.debug(data);
 		for(var i = 0; i < data.length; i++) {
 			if(data[i].name !== null) {
 				console.debug(data[i].name, $.trim($(data[i]).val()));
@@ -85,7 +86,6 @@ $(document).ready(function() {
 
 //вот эту ебалу свернуть в одну функцию, внутри которой и делать выборку по тому, что необходимо отобразить
 	$('#buttonMyTasks').click(function() {
-			fillStaticLists();
 			console.debug('myTasks func');
 			var params = 'director=' + encodeURIComponent(679); //тут id из сессии
 			if(!checkExist(myTasks)) {
@@ -134,19 +134,22 @@ $(document).ready(function() {
 		for(var key in task) {
 			if(key !== 'null') {
 				if(key === 'name') {
-					$('#panelTaskEdit #taskName').val(task.name);
+					$('#panelTaskEdit #taskName').attr('data-in', task.name);
 				}
 				if(key === 'description') {
-					$('#panelTaskEdit #taskDescription').val(task.description);
+					$('#panelTaskEdit #taskDescription').attr('data-in', task.description);
 				}
 				if(key === 'director') {
 					$('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
+					// $('#panelTaskEdit #taskDirector').attr('data-in', listUsers[task.director]);
 				}
 				if(key === 'status') {
 					$('#panelTaskEdit #taskStatus').val(listStatus[task.status]);
+					// $('#panelTaskEdit #taskStatus').attr('data-in', listStatus[task.status]);
 				}
 				if(key === 'type') {
 					$('#panelTaskEdit #taskType').val(listTypes[task.type]);
+					// $('#panelTaskEdit #taskType').attr('data-in', listTypes[task.type]);
 				}
 			}
 		}
@@ -167,31 +170,34 @@ $(document).ready(function() {
 		}
 	};
 
-	function fillStaticLists() {
-		$("#listTypes").select2({
-			data: listTypes
-		});
-		$("#listStatus").select2({
-			data: listStatus
-		});
-	}
-
-	$('#listUsers').click(function(){
-		fillListUsers();
-		fillStaticLists();
+	$('#panelTaskEdit').one('click',function(){
+		for(var key in listUsers) {
+			$('#listUsers').append( '<option value="'+ listUsers[key]+'" data-in="'+key+'">');
+		}
+		for(var key in listTypes) {
+			$('#listTypes').append( '<option value="'+ listTypes[key]+'" data-in="'+key+'">');
+		}
+		for(var key in listStatus) {
+			$('#listStatus').append( '<option value="'+ listStatus[key]+'" data-in="'+key+'">');
+		}
+		// fillListUsers();
+		// fillStaticLists();
 	})
 
-	function fillListUsers(task) {
-		// console.debug('listUsers', listUsers);
-		console.debug(new Date().getTime());
-		// $("#listUsers").select2({
-		// 	data: listUsers
-		// });
-		$("#listUsers").append(task.director);
-		console.debug(new Date().getTime());
-		// $('#listUsers [value="'+ task.director +'"]').attr('selected', 'selected');
-		console.debug(new Date().getTime());
-	};
+	// function fillListUsers() {
+	// 	// console.debug('listUsers', listUsers);
+	// 	console.debug(new Date().getTime());
+	// 	var list = new Array();
+	// 	for(var j in listUsers) {
+	// 		list.push(new Object({id: j, text: listUsers[j]}));
+	// 	}
+	// 	console.debug(list);
+	// 	$('#taskDirector').select2({
+	// 		data: list
+	// 	});
+	// 	console.debug(new Date().getTime());
+	// 	console.debug(new Date().getTime());
+	// };
 
 	function checkExist(obj) {//тут проверять вероятно будем из редиски
 		for(var key in obj) {
