@@ -3,14 +3,46 @@ var xhr = new XMLHttpRequest();
 
 $(document).ready(function() {
 
-	var allTasks = new Array(),//здесь хранятся задачи, потом редиска будет
-		myTasks = new Array(),
-		listStatus = new Array(),
-		listTypes = new Array(),
-		listUsers = new Array();
-		getExtra();
+	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
+			myTasks 		= new Array(),
+			listStatus	= new Array(),
+			listTypes 	= new Array(),
+			listUsers 	= new Array();
+	getExtra();
 
 //======== Добавление задачи
+
+	function getExtra() {
+		console.log('getExtra func');
+		if(checkExist(listUsers)) { //тут еще проверки на полноту типов и статусов, вообще статусы и типа и прочую статику надо вшить, либо один раз грузить, но отдельно от динамической инфы
+			return true;
+		} else {
+			$.get('getExtra', function (result) {
+				var arr = JSON.parse(result);
+				for(var i in arr) {
+					if(arr[i].hasOwnProperty('Users')) {
+						listUsers = arr[i].Users;
+						// for(var j in arr[i].Users) {
+						// 	listUsers.push(new Object({id: j, text: arr[i].Users[j]}));
+						// }
+					}
+					if(arr[i].hasOwnProperty('Types')) {
+						listTypes = arr[i].Types;
+						// for(var j in arr[i].Types) {
+						// 	listTypes.push(new Object({id: j, text: arr[i].Types[j]}));
+						// }
+					}
+					if(arr[i].hasOwnProperty('Status')) {
+						listStatus = arr[i].Status;
+						// for(var j in arr[i].Status) {
+						// 	listStatus.push(new Object({id: j, text: arr[i].Status[j]}));
+						// }
+					}
+				}
+			})
+		}
+	};
+
 	$('#buttonAddTask1').on('click', function(event) {
 		$('#listTasks').prepend('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
 		var task = {name: 'New Task'};
@@ -19,16 +51,23 @@ $(document).ready(function() {
 
 	$('#buttonAddTask2').on('click', function(event) {
 		$('#listTasks').append('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
+		var task = {name: 'New Task'};
+		showInfo(task);
 	});
 
 	$('#buttonTaskAdd').click(function(event) {
-		var data = $('#panelTaskEdit select');
-		console.debug($('select#listUsers').val(), $('select#listUsers').attr('name'));
-		console.debug($('select#listTypes').val());
-		console.debug($('select#listStatus').val());
+		console.debug('task add click');
+		var data = $('#panelTaskEdit [name]');
 		var task = new Object();
 		for(var i = 0; i < data.length; i++) {
-			task[data[i].name] = $('select#'+data[i].id).val();
+			if(data[i].name !== null) {
+				console.debug(data[i].name, $.trim($(data[i]).val()));
+				if($.trim($(data[i]).val()) === '') {
+					task[data[i].name] = null;
+				} else {
+					task[data[i].name] = $.trim($(data[i]).val());
+				}
+			}
 		}
 		console.debug(task);
 		// event.preventDefault();
@@ -44,10 +83,9 @@ $(document).ready(function() {
 		// });
 	});
 
-//======== Отображение задач
-
 //вот эту ебалу свернуть в одну функцию, внутри которой и делать выборку по тому, что необходимо отобразить
 	$('#buttonMyTasks').click(function() {
+			fillStaticLists();
 			console.debug('myTasks func');
 			var params = 'director=' + encodeURIComponent(679); //тут id из сессии
 			if(!checkExist(myTasks)) {
@@ -90,20 +128,25 @@ $(document).ready(function() {
 		}
 	});
 
-//======== Вспомогательные функции
-
 	function showInfo(task) {
-		// console.debug(arr[id]);
+		console.debug('show info func');
+		console.debug(task);
 		for(var key in task) {
 			if(key !== 'null') {
 				if(key === 'name') {
-					$('#panelTaskEdit #name').val(task.name);
+					$('#panelTaskEdit #taskName').val(task.name);
+				}
+				if(key === 'description') {
+					$('#panelTaskEdit #taskDescription').val(task.description);
 				}
 				if(key === 'director') {
-					// console.debug($('#panelTaskEdit [name="director"]').val(myTasks[id].director));
-					// console.debug($('#panelTaskEdit [name="director"]').val());
-					// $('#listUsers [id='+myTasks[id].director+']').attr('selected', 'selected');
-					$('#listUsers [id='+task.director+']').val();
+					$('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
+				}
+				if(key === 'status') {
+					$('#panelTaskEdit #taskStatus').val(listStatus[task.status]);
+				}
+				if(key === 'type') {
+					$('#panelTaskEdit #taskType').val(listTypes[task.type]);
 				}
 			}
 		}
@@ -124,67 +167,37 @@ $(document).ready(function() {
 		}
 	};
 
-	// $('.todo-list').click(function() {
-	// 	console.debug('on task click');//надо вытащить ид у задачи по которой был клик
-	// 	// console.debug(event.currentTarget.children[]);
-	// 	// console.debug($(this).children().text());
-	// 	// getExtra();//вынести отдельно, чтоб грузилось при входе на страницу в невидимом режиме и хранить это
-	// 	// $('#')
-	// 	// showInfo('5');
-	// 	// $('#panelTaskEdit').show();
-	// })
-
-//Отображение инфы
-	function showExtra() {
-		$("#listUsers").select2({
-			data: listUsers
-		});
+	function fillStaticLists() {
 		$("#listTypes").select2({
 			data: listTypes
 		});
 		$("#listStatus").select2({
 			data: listStatus
 		});
+	}
+
+	$('#listUsers').click(function(){
+		fillListUsers();
+		fillStaticLists();
+	})
+
+	function fillListUsers(task) {
+		// console.debug('listUsers', listUsers);
+		console.debug(new Date().getTime());
+		// $("#listUsers").select2({
+		// 	data: listUsers
+		// });
+		$("#listUsers").append(task.director);
+		console.debug(new Date().getTime());
+		// $('#listUsers [value="'+ task.director +'"]').attr('selected', 'selected');
+		console.debug(new Date().getTime());
 	};
 
-//Подгрузка списков
-	function getExtra() {
-		if(checkExist(listUsers)) { //тут еще проверки на полноту типов и статусов, вообще статусы и типа и прочую статику надо вшить, либо один раз грузить, но отдельно от динамической инфы
-			showExtra();
-		} else {
-			$.get('getExtra', function (result) {
-				var arr = JSON.parse(result);
-				for(var i in arr) {
-					if(arr[i].hasOwnProperty('Users')) {
-						for(var j in arr[i].Users) {
-							listUsers.push(new Object({id: arr[i].Users[j].id, text: arr[i].Users[j].name}));
-						}
-					}
-					if(arr[i].hasOwnProperty('Types')) {
-						for(var j in arr[i].Types) {
-							listTypes.push(new Object({id: arr[i].Types[j].id, text: arr[i].Types[j].sign}));
-						}
-					}
-					if(arr[i].hasOwnProperty('Status')) {
-						for(var j in arr[i].Status) {
-							listStatus.push(new Object({id: arr[i].Status[j].id, text: arr[i].Status[j].sign}));
-						}
-					}
-				}
-				showExtra();
-			})
-		}
-	};
-
-//Проверка массива всех задач
-	function checkExist(arr) {//тут проверять вероятно будем из редиски
-		// console.debug(arr);
-		if(arr.length !== 0) {
+	function checkExist(obj) {//тут проверять вероятно будем из редиски
+		for(var key in obj) {
 			return true;
-		} else {
-			console.debug('arr.length:', arr.length);
-			return false;
 		}
+		return false;
 	};
 
 })

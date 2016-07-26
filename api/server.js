@@ -36,6 +36,88 @@ app.use(express.static(path.join(__dirname,'../public')));
 //   console.error(err.stack);
 //   next(err);
 // }
+function getUsers() {	//проверка на права пользователя
+	return new Promise(function(resolve, reject) {
+		db.getUsers('id, name', function(err, result) {
+			if(err) {
+				console.info(err);
+				reject(err);
+			} else {
+				var res = new Object({Users: {}});
+				for(var i = 0; i < result.length; i++) {
+					res.Users[result[i].id] = result[i].name;
+				}
+				resolve(res);
+			}
+		});
+	}).then(function(result) {
+		return result;
+		console.log(result);
+	}, function(err) {
+		return false;
+	})
+}
+
+function getStatus() {
+	return new Promise(function(resolve, reject) {
+		db.getStatus(function(err, result) {
+			if(err) {
+				reject(err);
+				console.info(err);
+			} else {
+				var res = new Object({Status: {}});
+				for(var i = 0; i < result.length; i++) {
+					res.Status[result[i].id] = result[i].sign;
+				}
+				resolve(res);
+			}
+		})
+	}).then(function(result) {
+		return result;
+	}, function(err) {
+		return false;
+	})
+}
+
+function getTasks() {
+	return new Promise(function(resolve, reject) {
+		db.getTasks(function(err, result) {
+			if(err) {
+				console.info(err);
+				reject(err);
+			} else { //поменять
+				var res = new Object();
+				res.Tasks = result;
+				resolve(res);
+			}
+		});
+	}).then(function(result) {
+		return result;
+	}, function(err) {
+		return false;
+	})
+}
+
+function getTypes() {
+	return new Promise(function(resolve, reject) {
+		db.getTypes(function(err, result) {
+			if(err) {
+				reject(err);
+				console.info(err);
+			} else {
+				var res = new Object({Types: {}});
+				for(var i = 0; i < result.length; i++) {
+					res.Types[result[i].id] = result[i].sign;
+				}
+				resolve(res);
+			}
+		})
+	}).then(function(result) {
+		return result;
+	}, function(err) {
+		return false;
+	})
+}
 
 app.listen(config.api.http, function() {
 	console.info('APP listening on port ' + config.api.http.port);
@@ -70,102 +152,29 @@ app.get('/getTasks', function (req, res) {
 			console.error('getTasks: ', err);
 			res.send(err);
 		} else {
-			res.send(JSON.stringify(result));
+			var tasks = new Object();
+			for(var i = 0; i < result.length; i++) {
+				tasks[result[i].id] = result[i];
+			}
+			res.send(JSON.stringify(tasks));
 		}
 	})
 })
-
-function getUsers() {	//проверка на права пользователя
-	return new Promise(function(resolve, reject) {
-		db.getUsers('id, name', function(err, result) {
-			if(err) {
-				console.info(err);
-				reject(err);
-			} else {
-				var res = new Object();
-				res.Users = result;
-				// console.log(res);
-				resolve(res);
-			}
-		});
-	}).then(function(result) {
-		return result;
-		console.log(result);
-	}, function(err) {
-		return false;
-	})
-}
-
-function getTasks() {
-	return new Promise(function(resolve, reject) {
-		db.getTasks(function(err, result) {
-			if(err) {
-				console.info(err);
-				reject(err);
-			} else {
-				var res = new Object();
-				res.Tasks = result;
-				resolve(res);
-			}
-		});
-	}).then(function(result) {
-		return result;
-	}, function(err) {
-		return false;
-	})
-}
-
-function getTypes() {
-	return new Promise(function(resolve, reject) {
-		db.getTypes(function(err, result) {
-			if(err) {
-				reject(err);
-				console.info(err);
-			} else {
-				var res = new Object();
-				res.Types = result;
-				resolve(res);
-			}
-		})
-	}).then(function(result) {
-		return result;
-	}, function(err) {
-		return false;
-	})
-}
-
-function getStatus() {
-	return new Promise(function(resolve, reject) {
-		db.getStatus(function(err, result) {
-			if(err) {
-				reject(err);
-				console.info(err);
-			} else {
-				var res = new Object();
-				res.Status = result;
-				resolve(res);
-			}
-		})
-	}).then(function(result) {
-		return result;
-	}, function(err) {
-		return false;
-	})
-}
 
 app.get('/getExtra', function (req, res) {
 	console.info('Request to /getExtra');
 	var resList = new Object();
 	Promise.all([getUsers(), getTypes(), getStatus()]).then(function(resultArray) {
-		// console.info(resultArray);
 		for(var i in resultArray) {
 			if(resultArray[i] == false) {
 				break;
 				console.err('err');
 			} else {
 				// console.info(resultArray[i]);
+				// resList[resultArray[i]];
 			}
 		}
+		// console.log(resultArray);
 		res.send(JSON.stringify(resultArray));
 	})
 })
@@ -173,15 +182,17 @@ app.get('/getExtra', function (req, res) {
 app.post('/addTask', function (req, res) {
 	console.info('Request /addTask');
 	var task = new myTask(req.body);
-	task.add(function(err, result) {
-		if(err) {
-			console.error('/addTask add: ', err);
-			res.send(err);
-		} else {
-			console.log('/addTask\n', result);
-			var text = 'Задача ' + result[0].name + ' добавлена с id: ' + result[0].id;
-			// console.info(result);
-			res.send(JSON.stringify(text));
-		}
-	});
+	console.debug(task);
+	// task.add(function(err, result) {
+	// 	if(err) {
+	// 		console.error('/addTask add: ', err);
+	// 		res.send(err);
+	// 	} else {
+	// 		console.log('/addTask\n', result);
+	// 		var text = 'Задача ' + result[0].name + ' добавлена с id: ' + result[0].id;
+	// 		// console.info(result);
+	// 		res.send(JSON.stringify(text));
+	// 	}
+	// });
+
 })

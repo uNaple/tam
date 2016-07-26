@@ -9,6 +9,7 @@ function myUser() {
 	this.group_permission 	= null;
 }
 
+
 function myTask(task) {
 	// this.id = null;
 	// this.name = null;

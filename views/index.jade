@@ -8,8 +8,8 @@ html
 		link(href='/css/main.css', rel='stylesheet')
 		link(href='/css/AdminLTE.min.css', rel='stylesheet')
 		link(href='/css/select2.min.css', rel='stylesheet')
-		link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css')
-		link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css')
+		link(href='/css/ionicons.min.css', rel='stylesheet')
+		link(href='/css/font-awesome.min.css', rel='stylesheet')
 	body
 		nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
 			.container-fluid
@@ -53,7 +53,7 @@ html
 							a()
 								| Что-то
 				.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-					h3 Мои задачи
+					h3 Мои задачи (статусное сообщение и сессия)
 					.row
 						.col-md-5.col-sm-12
 							h4.box-title
@@ -96,15 +96,27 @@ html
 										| 70% Increase in 30 Days
 							.jumbotron
 								form#panelTaskEdit(hidden='true', role='form')
+									.overlay
+										i.fa.fa-refresh.fa-spin
+									.form-group
+										label Название
+										input#taskName.form-control(placeholder='task name', type='text', name='name')
+									.form-group
+										label Описание
+										textarea#taskDescription.form-control(rows='3', placeholder='Описание ',  name='description')
 									.form-group
 										label Постановщик
-										select#listUsers.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;')
+										input#taskDirector.form-control(name='director')
+										//- input#taskDirector.form-control(placeholder='Enter ...', type='text', name='director')
+										//- select#listUsers.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director', placeholder='director')
 									.form-group
 										label Тип
-										select#listTypes.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;')
+										input#taskType.form-control(name='type')
+										//- select#listTypes.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')
 									.form-group
 										label Статус
-										select#listStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;')
+										input#taskStatus.form-control(name='status')
+										//- select#listStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status')
 									button#buttonTaskAdd.btn.btn-primary(type='button') Accept
 								h4 Статистика
 								p
@@ -116,7 +128,7 @@ html
 									.progress-bar(role='progressbar', aria-valuenow='70', aria-valuemin='0', aria-valuemax='100', style='width: 70%;', title='сколько то процентов в зависимсти от выполненых задач распределенных по времени')
 										| 70%
 		script(src='/js/jquery-2.2.3.min.js')
-		script(src='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js')
+		script(src='/js/jquery-ui.min.js')
 		script(src='/js/custombox.min.js')
 		script(src='/js/bootstrap.min.js')
 		script(src='/js/bootstrap.js')

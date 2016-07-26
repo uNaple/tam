@@ -119,7 +119,21 @@ function testUpdate(id) {
 
 }
 
-db.getTasks();
+db.getUsers('id, name', function(err, result) {
+			if(err) {
+				console.info(err);
+			} else {
+				var res = new Object({Users: {}});
+				// res= result;
+				for(var i = 0; i < result.length; i++) {
+					// console.log(result[i].id);
+					res.Users[result[i].id] = result[i].name;
+				}
+				// console.log("Res ARRAY=====================================", res);
+				// console.log(res.Users[81]);
+			}
+})
+
 function print() {
 // var director = '3';
 	// db.getUsers('*', function(err, result) {
