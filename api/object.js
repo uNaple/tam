@@ -204,15 +204,17 @@ myTask.prototype.add = function(cb) {
 	})
 }
 
-myTask.prototype.update = function() {
+myTask.prototype.update = function(cb) {
 	this.checkThis(function(err, task) {
 		if(err) {
 			console.info(err.message);
 		} else {
 			db.updateTask(task, function(err, result) {
 				if(err) {
+					cb(err)
 					console.log(err.message);
 				} else {
+					cb(null)
 					console.log('up-to-date');
 				}
 			})

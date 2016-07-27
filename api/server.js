@@ -196,3 +196,20 @@ app.post('/addTask', function (req, res) {
 		}
 	});
 })
+
+app.post('/updateTask', function (req, res) {
+	console.info('Request /updateTask');
+	var task = new myTask(req.body);
+	console.info(task);
+	task.update(function(err) {
+		if(err) {
+			console.error('/updateTask add: ', err);
+			res.send(JSON.stringify(err));
+		} else {
+			console.log('/updateTask');
+			var text = 'Задача с id ' + task.id + 'обновлена';
+			// console.info(result);
+			res.send(JSON.stringify(text));
+		}
+	});
+})

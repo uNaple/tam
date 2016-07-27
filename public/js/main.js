@@ -49,12 +49,19 @@ $(document).ready(function() {
 			}
 		}
 		console.debug(task);
-		// if(true) {
-		// // sendTask(task);
-		// } else {
-		// 	// updateTask();
-		// }
-
+		// console.debug($('#buttonTaskAccept').data('new'));
+		if($('#buttonTaskAccept').data('id') !== 'false') {
+			console.debug('need update');
+			task.id = $('#buttonTaskAccept').data('id');
+			updateTask(task);
+		} else {
+			console.debug('need add')
+			sendTask(task);
+		}
+		allTasks = [];
+		getTasks(function(){
+			showAll(allTasks);
+		})
 	});
 
 	function sendTask(task) {
@@ -66,10 +73,23 @@ $(document).ready(function() {
 					result = JSON.parse(result);
 					alert(result)
 					console.debug(result);
-					getAllTasks();
 				}
 		});
 	}
+
+	function updateTask(task) {
+		$.ajax({
+			url: 'updateTask',
+			method: 'POST',
+			data: task,
+			success: function(result) {
+					result = JSON.parse(result);
+					alert(result)
+					console.debug(result);
+				}
+		});
+	}
+
 
 	function getExtra() {
 		console.log('getExtra func');
@@ -177,7 +197,7 @@ $(document).ready(function() {
 
 	function showInfo(task) {
 		console.debug('show info func');
-		console.debug(task);
+		// console.debug(task);
 		for(var key in task) {
 			if(key !== 'null') {
 				if(key === 'name') {
@@ -197,8 +217,10 @@ $(document).ready(function() {
 		var task = new Object();
 		if($(this).data('id')) {
 			task = allTasks[$(this).data('id')];
+			$('#buttonTaskAccept').data('id', $(this).data('id'));
 		} else {
 			task = $(this).data();
+			$('#buttonTaskAccept').data('id', 'false');
 		}
 		// console.debug(task);
 		fillListUsers(task.director);
