@@ -36,6 +36,11 @@ app.use(express.static(path.join(__dirname,'../public')));
 //   console.error(err.stack);
 //   next(err);
 // }
+
+app.listen(config.api.http, function() {
+	console.info('APP listening on port ' + config.api.http.port);
+ });
+
 function getUsers() {	//проверка на права пользователя
 	return new Promise(function(resolve, reject) {
 		db.getUsers('id, name', function(err, result) {
@@ -119,10 +124,6 @@ function getTypes() {
 	})
 }
 
-app.listen(config.api.http, function() {
-	console.info('APP listening on port ' + config.api.http.port);
- });
-
 app.get('/', function (req, res) {
   res.render('index', {
   						title: 		'tm',
@@ -182,17 +183,16 @@ app.get('/getExtra', function (req, res) {
 app.post('/addTask', function (req, res) {
 	console.info('Request /addTask');
 	var task = new myTask(req.body);
-	console.debug(task);
-	// task.add(function(err, result) {
-	// 	if(err) {
-	// 		console.error('/addTask add: ', err);
-	// 		res.send(err);
-	// 	} else {
-	// 		console.log('/addTask\n', result);
-	// 		var text = 'Задача ' + result[0].name + ' добавлена с id: ' + result[0].id;
-	// 		// console.info(result);
-	// 		res.send(JSON.stringify(text));
-	// 	}
-	// });
-
+	console.info(task);
+	task.add(function(err, result) {
+		if(err) {
+			console.error('/addTask add: ', err);
+			res.send(JSON.stringify(err));
+		} else {
+			console.log('/addTask\n', result);
+			var text = 'Задача ' + result[0].name + ' добавлена с id: ' + result[0].id;
+			// console.info(result);
+			res.send(JSON.stringify(text));
+		}
+	});
 })

@@ -9,8 +9,67 @@ $(document).ready(function() {
 			listTypes 	= new Array(),
 			listUsers 	= new Array();
 	getExtra();
+	// getTasks();
 
-//======== Добавление задачи
+	$('#buttonAddTask1').on('click', function(event) {
+		var task = {name: 'New Task1', director: '451', type: 1, status: 5};
+		var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
+		$(elem).data('name', task.name)
+					 .data('director', task.director)
+					 .data('type', task.type)
+					 .data('status', task.status);
+		$('#listTasks').prepend(elem);
+		elem.click(onTaskClick);
+	});
+
+	$('#buttonAddTask2').on('click', function(event) {
+		var task = {name: 'New Task1', director: '451', type: 1, status: 5};
+		var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
+		$(elem).data('name', task.name)
+					 .data('director', task.director)
+					 .data('type', task.type)
+					 .data('status', task.status);
+		$('#listTasks').append(elem);
+		elem.click(onTaskClick);
+	});
+
+	$('#buttonTaskAccept').click(function(event) {
+		console.debug('task add click');
+		var data = $('#panelTaskEdit [name]');
+		var task = new Object();
+		console.debug(data);
+		for(var i = 0; i < data.length; i++) {
+			if(data[i].name !== null) {
+				console.debug(data[i].name, $.trim($(data[i]).val()));
+				if($.trim($(data[i]).val()) === '') {
+					task[data[i].name] = null;
+				} else {
+					task[data[i].name] = $.trim($(data[i]).val());
+				}
+			}
+		}
+		console.debug(task);
+		// if(true) {
+		// // sendTask(task);
+		// } else {
+		// 	// updateTask();
+		// }
+
+	});
+
+	function sendTask(task) {
+		$.ajax({
+			url: 'addTask',
+			method: 'POST',
+			data: task,
+			success: function(result) {
+					result = JSON.parse(result);
+					alert(result)
+					console.debug(result);
+					getAllTasks();
+				}
+		});
+	}
 
 	function getExtra() {
 		console.log('getExtra func');
@@ -22,9 +81,6 @@ $(document).ready(function() {
 				for(var i in arr) {
 					if(arr[i].hasOwnProperty('Users')) {
 						listUsers = arr[i].Users;
-						// for(var j in arr[i].Users) {
-						// 	listUsers.push(new Object({id: j, text: arr[i].Users[j]}));
-						// }
 					}
 					if(arr[i].hasOwnProperty('Types')) {
 						listTypes = arr[i].Types;
@@ -37,74 +93,10 @@ $(document).ready(function() {
 		}
 	};
 
-	$('#buttonAddTask1').on('click', function(event) {
-		$('#listTasks').prepend('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
-		var task = {name: 'New Task1', director: '451'};
-		showInfo(task);
-	});
-
-	$('#buttonAddTask2').on('click', function(event) {
-		$('#listTasks').append('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
-		var task = {name: 'New Task2', director: '456'};
-		showInfo(task);
-	});
-
-	$('#buttonTaskAdd').click(function(event) {
-		console.debug('task add click');
-		var data = $('#panelTaskEdit [name]');
-		var task = new Object();
-		console.debug(data);
-		for(var i = 0; i < data.length; i++) {
-			if(data[i].name !== null) {
-				// console.debug(data[i].name, $.trim($(data[i]).attr('data-in')));
-				console.debug(data[i].name, $.trim($(data[i]).val()));
-				if($.trim($(data[i]).val()) === '') {
-					task[data[i].name] = null;
-				} else {
-					task[data[i].name] = $.trim($(data[i]).val());
-				}
-			}
-		}
-		console.debug(task);
-		// event.preventDefault();
-		// $.ajax({
-		// 	url: 'addTask',
-		// 	method: 'POST',
-		// 	data: task,
-		// 	success: function(result) {
-		// 			result = JSON.parse(result);
-		// 			alert(result)
-		// 			console.debug(result);
-		// 		}
-		// });
-	});
-
-//вот эту ебалу свернуть в одну функцию, внутри которой и делать выборку по тому, что необходимо отобразить
-	$('#buttonMyTasks').click(function() {
-			console.debug('myTasks func');
-			var params = 'director=' + encodeURIComponent(679); //тут id из сессии
-			if(!checkExist(myTasks)) {
-				xhr.open('GET', '/getTasks?' + params, true);
-				xhr.send();
-				xhr.onreadystatechange = function() {
-					if(xhr.readyState != 4)	return;
-					if(xhr.status != 200) {
-						alert(xhr.status + ': ' + xhr.statusText);
-					} else {
-						myTasks = JSON.parse(xhr.responseText);
-						console.debug('myTasks: ', myTasks);
-						showAll(myTasks);
-					}
-				}
-			} else {
-				showAll(myTasks);
-			}
-	});
-
-	$('#buttonAllTasks').click(function() {
-		console.debug('allTasks func');
-		var params = 'status != 7'; //тут id из сессии
+	function getTasks(cb) {
+		var params = 'status != 7';
 		if(!checkExist(allTasks)) {
+			console.debug('checkExist is empty');
 			xhr.open('GET', '/getTasks?' + params, true);
 			xhr.send();
 			xhr.onreadystatechange = function() {
@@ -113,63 +105,42 @@ $(document).ready(function() {
 					alert(xhr.status + ': ' + xhr.statusText);
 				} else {
 					allTasks = JSON.parse(xhr.responseText);
-					console.debug('allTasks: ', allTasks);
-					showAll(allTasks);
-					// console.debug(JSON.parse(xhr.responseText));
+					console.debug(allTasks);
+					cb(allTasks);
 				}
 			}
 		} else {
-			showAll(allTasks);
+			console.debug('checkExist is not empty');
+			cb(allTasks);
 		}
+	};
+
+	$('#buttonMyTasks').click(function() {
+			// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
+		console.debug('myTasks func');
+		var id = 679;
+		getTasks(function(arr) {
+			if(checkExist(myTasks)) {
+				console.debug('checkExist is not empty');
+				showAll(myTasks);
+			} else {
+				console.debug('checkExist is empty');
+				for(var key in arr) {
+					if(arr[key].director === id) {
+						myTasks.push(allTasks[key]);
+					}
+				}
+				showAll(myTasks);
+			}
+		})
 	});
 
-	function showInfo(task) {
-		console.debug('show info func');
-		console.debug(task);
-		for(var key in task) {
-			if(key !== 'null') {
-				if(key === 'name') {
-					console.debug(task.name);
-					$('#panelTaskEdit #taskName').val(task.name);
-					// $('#panelTaskEdit #taskName').attr('data-in', task.name);
-				}
-				if(key === 'description') {
-					$('#panelTaskEdit #taskDescription').val(task.description);
-					// $('#panelTaskEdit #taskDescription').attr('data-in', task.description);
-				}
-				// if(key === 'director') {
-				// 	// $('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
-				// 	// $('#panelTaskEdit #taskDirector').attr('data-in', listUsers[task.director]);
-				// }
-				// if(key === 'status') {
-				// 	$('#panelTaskEdit #taskStatus').val(listStatus[task.status]);
-				// 	// $('#panelTaskEdit #taskStatus').attr('data-in', listStatus[task.status]);
-				// }
-				// if(key === 'type') {
-				// 	$('#panelTaskEdit #taskType').val(listTypes[task.type]);
-				// 	// $('#panelTaskEdit #taskType').attr('data-in', listTypes[task.type]);
-				// }
-			}
-		}
-		$('#panelTaskEdit').show();
-	};
-
-//Отображение листа с задачами.
-	function showAll(arr) {
-		$('#listTasks').empty();
-		for(var key in arr) {
-			var elem = $('<li class="flexrow" style="" data-id="' + arr[key].id +'"><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
-			$('#listTasks').append(elem);
-			$('#taskDirector').select2();
-
-			elem.click(function() {
-				fillListUsers(arr[$(this).attr('data-id')].director);
-				fillStaticLists(arr[$(this).attr('data-id')]);
-				console.debug('click on task with id:', $(this).attr('data-id') );
-				showInfo(arr[$(this).attr('data-id')]);
-			})
-		}
-	};
+	$('#buttonAllTasks').click(function() {
+		console.debug('allTasks func');
+		getTasks(function(arr) {
+			showAll(arr);
+		});
+	});
 
 	function fillListUsers(director) {
 		$('#taskDirector').select2();
@@ -193,16 +164,59 @@ $(document).ready(function() {
 				$('#taskType').append('<option value="'+key+'" selected = "selected">'+ listTypes[key]+'</option>');
 				continue;
 			}
-			$('#taskType').append('<option value="'+ listTypes[key]+'">'+key+'</option>');
+			$('#taskType').append('<option value="'+ key +'">'+listTypes[key]+'</option>');
 		}
 		for(var key in listStatus) {
 			if(key === task.status.toString()) {
 				$('#taskStatus').append('<option value="'+key+'" selected = "selected">'+ listStatus[key]+'</option>');
 				continue;
 			}
-			$('#taskStatus').append('<option value="'+ listStatus[key]+'">'+key+'</option>');
+			$('#taskStatus').append('<option value="'+ key+'">'+listStatus[key]+'</option>');
 		}
+	};
+
+	function showInfo(task) {
+		console.debug('show info func');
+		console.debug(task);
+		for(var key in task) {
+			if(key !== 'null') {
+				if(key === 'name') {
+					// console.debug(task.name);
+					$('#panelTaskEdit #taskName').val(task.name);
+				}
+				if(key === 'description') {
+					$('#panelTaskEdit #taskDescription').val(task.description);
+				}
+			}
+		}
+		$('#panelTaskEdit').show();
+	};
+
+	function onTaskClick() {
+		console.log('on task click', this);
+		var task = new Object();
+		if($(this).data('id')) {
+			task = allTasks[$(this).data('id')];
+		} else {
+			task = $(this).data();
+		}
+		// console.debug(task);
+		fillListUsers(task.director);
+		fillStaticLists(task);
+		showInfo(task);
 	}
+
+	function showAll(arr) {
+		console.debug(arr);
+		console.debug('show all func');
+		$('#listTasks').empty();
+		for(var key in arr) {
+			var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
+			$(elem).data('id', arr[key].id);
+			$('#listTasks').append(elem);
+			elem.click(onTaskClick);
+		}
+	};
 
 	function checkExist(obj) {//тут проверять вероятно будем из редиски
 		for(var key in obj) {
