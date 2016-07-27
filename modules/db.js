@@ -207,7 +207,7 @@ function updateTask (task, cb){                      							//обновить �
 			query += `, parentid = '${task.parentid}'`;
 		}
 		if(task.description !== null) {
-			query += `, description = '${task.description}'`;
+			query += `, description = convert_from(decode('${task.description}', 'base64'), 'UTF-8')`;
 		}
 		if(task.scope !== null) {
 			query += `, scope = '${task.scope}'`;
