@@ -142,7 +142,7 @@ function addTask(task, cb) {
 		}
 		queryHead += ')';
 		queryTail += ')';
-		var queryFinal = queryHead + queryTail.replaceAll('\t|\n|\n\r', '') + ' RETURNING id, name;';
+		var queryFinal = queryHead + queryTail.replaceAll('\t|\n|\n\r', '') + ' RETURNING *;';
 		console.info('db query\n', queryFinal);
 		client.query(queryFinal, function(err, result) {						//отправляем запрос
 	    if(err) {

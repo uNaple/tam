@@ -192,7 +192,8 @@ app.post('/addTask', function (req, res) {
 			console.log('/addTask\n', result);
 			var text = 'Задача ' + result[0].name + ' добавлена с id: ' + result[0].id;
 			// console.info(result);
-			res.send(JSON.stringify(text));
+			var answer = {text: text, task: result[0]};
+			res.send(JSON.stringify(answer));
 		}
 	});
 })

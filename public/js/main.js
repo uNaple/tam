@@ -67,11 +67,12 @@ $(document).ready(function() {
 			data: task,
 			success: function(result) {
 					result = JSON.parse(result);
-					alert(result);//тут проверять что пришло и добавлять или не добавлять возвращать задачу добавленную и обновлять
-					// console.debug(result);
-					// console.debug(task);
+					alert(result.text);//тут проверять что пришло и добавлять или не добавлять возвращать задачу добавленную и обновлять
+					console.debug(task);
 					// console.debug(allTasks);
-					// showAll(allTasks);
+					console.debug(result.task.id);
+					allTasks[result.task.id] = result.task;
+					showAll(allTasks);
 				}
 		});
 	}
@@ -87,7 +88,7 @@ $(document).ready(function() {
 					console.debug(result);
 					console.debug(task);
 					console.debug(allTasks);
-					allTasks[task.id] = (task);
+					allTasks[task.id] = task;
 					showAll(allTasks);
 					// showAll(allTasks);
 				}
