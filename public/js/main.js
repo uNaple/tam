@@ -62,6 +62,7 @@ $(document).ready(function() {
 		console.debug(data);
 		for(var i = 0; i < data.length; i++) {
 			if(data[i].name !== null) {
+				// console.debug(data[i].name, $.trim($(data[i]).attr('data-in')));
 				console.debug(data[i].name, $.trim($(data[i]).val()));
 				if($.trim($(data[i]).val()) === '') {
 					task[data[i].name] = null;
@@ -134,13 +135,16 @@ $(document).ready(function() {
 		for(var key in task) {
 			if(key !== 'null') {
 				if(key === 'name') {
-					$('#panelTaskEdit #taskName').attr('data-in', task.name);
+					console.debug(task.name);
+					$('#panelTaskEdit #taskName').val(task.name);
+					// $('#panelTaskEdit #taskName').attr('data-in', task.name);
 				}
 				if(key === 'description') {
-					$('#panelTaskEdit #taskDescription').attr('data-in', task.description);
+					$('#panelTaskEdit #taskDescription').val(task.description);
+					// $('#panelTaskEdit #taskDescription').attr('data-in', task.description);
 				}
 				if(key === 'director') {
-					$('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
+					// $('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
 					// $('#panelTaskEdit #taskDirector').attr('data-in', listUsers[task.director]);
 				}
 				if(key === 'status') {
@@ -162,42 +166,43 @@ $(document).ready(function() {
 		for(var key in arr) {
 			var elem = $('<li class="flexrow" style="" data-id="' + arr[key].id +'"><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
 			$('#listTasks').append(elem);
+			$('#taskDirector').select2();
 
 			elem.click(function() {
+				fillListUsers(arr[$(this).attr('data-id')].director);
 				console.debug('click on task with id:', $(this).attr('data-id') );
 				showInfo(arr[$(this).attr('data-id')]);
 			})
 		}
 	};
 
-	$('#panelTaskEdit').one('click',function(){
-		for(var key in listUsers) {
-			$('#listUsers').append( '<option value="'+ listUsers[key]+'" data-in="'+key+'">');
-		}
-		for(var key in listTypes) {
-			$('#listTypes').append( '<option value="'+ listTypes[key]+'" data-in="'+key+'">');
-		}
-		for(var key in listStatus) {
-			$('#listStatus').append( '<option value="'+ listStatus[key]+'" data-in="'+key+'">');
-		}
-		// fillListUsers();
-		// fillStaticLists();
-	})
-
-	// function fillListUsers() {
-	// 	// console.debug('listUsers', listUsers);
-	// 	console.debug(new Date().getTime());
-	// 	var list = new Array();
-	// 	for(var j in listUsers) {
-	// 		list.push(new Object({id: j, text: listUsers[j]}));
+	// $('#panelTaskEdit').one('click',function(){
+	// 	$('#taskDirector').select2();
+	// 	for(var key in listUsers) {
+	// 		if(key = task.director) {
+	// 			$('#taskDirector').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
+	// 		}
+	// 		$('#taskDirector').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
 	// 	}
-	// 	console.debug(list);
-	// 	$('#taskDirector').select2({
-	// 		data: list
-	// 	});
-	// 	console.debug(new Date().getTime());
-	// 	console.debug(new Date().getTime());
-	// };
+	// 	// for(var key in listTypes) {
+	// 	// 	$('#listTypes').append( '<option value="'+ listTypes[key]+'" data-in="'+key+'"></option>');
+	// 	// }
+	// 	// for(var key in listStatus) {
+	// 	// 	$('#listStatus').append( '<option value="'+ listStatus[key]+'" data-in="'+key+'"></option>');
+	// 	// }
+	// 	// fillListUsers();
+	// 	// fillStaticLists();
+	// })
+
+	function fillListUsers(director) {
+		for(var key in listUsers) {
+			if(key === director.toString()) {
+				$('#taskDirector').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
+				continue;
+			}
+			$('#taskDirector').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
+		}
+	};
 
 	function checkExist(obj) {//тут проверять вероятно будем из редиски
 		for(var key in obj) {

@@ -106,8 +106,7 @@ html
 										textarea#taskDescription.form-control(rows='3', placeholder='Описание ',  name='description')
 									.form-group
 										label Постановщик
-										input#taskDirector.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director', list='listUsers')
-										datalist#listUsers
+										select#taskDirector.form-control.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
 									.form-group
 										label Тип
 										input#taskType.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type', list='listTypes')
