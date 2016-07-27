@@ -107,7 +107,7 @@ myTask.prototype.checkType = function() {								//проверка правил
 	return new Promise(function(resolve, reject) {
 		if(self.type === '3' && self.parentid === null) {			//Если подзадача, то должен быть родитель
 			reject(new Error('У подзадачи должен быть родитель. Задача: ' + self.name));
-		} else if(self.type === '2' && self.parent !== null) {
+		} else if(self.type === '2' && self.parentid !== null) {
 			reject(new Error('У проекта не может быть родителя'));
 		}	else {
 			resolve();
@@ -176,6 +176,9 @@ myTask.prototype.checkThis = function(cb) {							//тут собрать вме
 			} else if(i == (resultArray.length-1)) {
 				console.info('checkThis is OK');
 				self.name = new Buffer(self.name).toString('base64');
+				if(self.description !== null) {
+					self.description = new Buffer(self.description).toString('base64');
+				}
 				cb(null, self);
 			}
 		}

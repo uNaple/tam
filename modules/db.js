@@ -118,7 +118,7 @@ function addTask(task, cb) {
 		}
 		if(task.description !== null) {
 			queryHead += ', description';
-			queryTail += `, decode('${task.description}', 'base64')`;
+			queryTail += `, convert_from(decode('${task.description}', 'base64'), 'UTF-8')`;
 		}
 		if(task.parentid !== null) {	//?????
 			queryHead += ', parentid';
