@@ -106,15 +106,13 @@ html
 										textarea#taskDescription.form-control(rows='3', placeholder='Описание ',  name='description')
 									.form-group
 										label Постановщик
-										select#taskDirector.form-control.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
+										select#taskDirector.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
 									.form-group
 										label Тип
-										input#taskType.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type', list='listTypes')
-										datalist#listTypes
+										select#taskType.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')
 									.form-group
 										label Статус
-										input#taskStatus.form-control.select2(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status', list='listStatus')
-										datalist#listStatus
+										select#taskStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status')
 									button#buttonTaskAdd.btn.btn-primary(type='button') Accept
 								h4 Статистика
 								p

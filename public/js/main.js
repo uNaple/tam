@@ -28,15 +28,9 @@ $(document).ready(function() {
 					}
 					if(arr[i].hasOwnProperty('Types')) {
 						listTypes = arr[i].Types;
-						// for(var j in arr[i].Types) {
-						// 	listTypes.push(new Object({id: j, text: arr[i].Types[j]}));
-						// }
 					}
 					if(arr[i].hasOwnProperty('Status')) {
 						listStatus = arr[i].Status;
-						// for(var j in arr[i].Status) {
-						// 	listStatus.push(new Object({id: j, text: arr[i].Status[j]}));
-						// }
 					}
 				}
 			})
@@ -45,13 +39,13 @@ $(document).ready(function() {
 
 	$('#buttonAddTask1').on('click', function(event) {
 		$('#listTasks').prepend('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
-		var task = {name: 'New Task'};
+		var task = {name: 'New Task1', director: '451'};
 		showInfo(task);
 	});
 
 	$('#buttonAddTask2').on('click', function(event) {
 		$('#listTasks').append('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >New task' );
-		var task = {name: 'New Task'};
+		var task = {name: 'New Task2', director: '456'};
 		showInfo(task);
 	});
 
@@ -143,18 +137,18 @@ $(document).ready(function() {
 					$('#panelTaskEdit #taskDescription').val(task.description);
 					// $('#panelTaskEdit #taskDescription').attr('data-in', task.description);
 				}
-				if(key === 'director') {
-					// $('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
-					// $('#panelTaskEdit #taskDirector').attr('data-in', listUsers[task.director]);
-				}
-				if(key === 'status') {
-					$('#panelTaskEdit #taskStatus').val(listStatus[task.status]);
-					// $('#panelTaskEdit #taskStatus').attr('data-in', listStatus[task.status]);
-				}
-				if(key === 'type') {
-					$('#panelTaskEdit #taskType').val(listTypes[task.type]);
-					// $('#panelTaskEdit #taskType').attr('data-in', listTypes[task.type]);
-				}
+				// if(key === 'director') {
+				// 	// $('#panelTaskEdit #taskDirector').val(listUsers[task.director]);
+				// 	// $('#panelTaskEdit #taskDirector').attr('data-in', listUsers[task.director]);
+				// }
+				// if(key === 'status') {
+				// 	$('#panelTaskEdit #taskStatus').val(listStatus[task.status]);
+				// 	// $('#panelTaskEdit #taskStatus').attr('data-in', listStatus[task.status]);
+				// }
+				// if(key === 'type') {
+				// 	$('#panelTaskEdit #taskType').val(listTypes[task.type]);
+				// 	// $('#panelTaskEdit #taskType').attr('data-in', listTypes[task.type]);
+				// }
 			}
 		}
 		$('#panelTaskEdit').show();
@@ -170,31 +164,16 @@ $(document).ready(function() {
 
 			elem.click(function() {
 				fillListUsers(arr[$(this).attr('data-id')].director);
+				fillStaticLists(arr[$(this).attr('data-id')]);
 				console.debug('click on task with id:', $(this).attr('data-id') );
 				showInfo(arr[$(this).attr('data-id')]);
 			})
 		}
 	};
 
-	// $('#panelTaskEdit').one('click',function(){
-	// 	$('#taskDirector').select2();
-	// 	for(var key in listUsers) {
-	// 		if(key = task.director) {
-	// 			$('#taskDirector').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
-	// 		}
-	// 		$('#taskDirector').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
-	// 	}
-	// 	// for(var key in listTypes) {
-	// 	// 	$('#listTypes').append( '<option value="'+ listTypes[key]+'" data-in="'+key+'"></option>');
-	// 	// }
-	// 	// for(var key in listStatus) {
-	// 	// 	$('#listStatus').append( '<option value="'+ listStatus[key]+'" data-in="'+key+'"></option>');
-	// 	// }
-	// 	// fillListUsers();
-	// 	// fillStaticLists();
-	// })
-
 	function fillListUsers(director) {
+		$('#taskDirector').select2();
+		$('#taskDirector').empty();
 		for(var key in listUsers) {
 			if(key === director.toString()) {
 				$('#taskDirector').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
@@ -203,6 +182,27 @@ $(document).ready(function() {
 			$('#taskDirector').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
 		}
 	};
+
+	function fillStaticLists(task) {
+		$('#taskType').select2();
+		$('#taskStatus').select2();
+		$('#taskType').empty();
+		$('#taskStatus').empty();
+		for(var key in listTypes) {
+			if(key === task.type.toString()) {
+				$('#taskType').append('<option value="'+key+'" selected = "selected">'+ listTypes[key]+'</option>');
+				continue;
+			}
+			$('#taskType').append('<option value="'+ listTypes[key]+'">'+key+'</option>');
+		}
+		for(var key in listStatus) {
+			if(key === task.status.toString()) {
+				$('#taskStatus').append('<option value="'+key+'" selected = "selected">'+ listStatus[key]+'</option>');
+				continue;
+			}
+			$('#taskStatus').append('<option value="'+ listStatus[key]+'">'+key+'</option>');
+		}
+	}
 
 	function checkExist(obj) {//тут проверять вероятно будем из редиски
 		for(var key in obj) {
