@@ -5,10 +5,17 @@
   "dependencies": {
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "bootstrap": "^3.3.6",
+    "console-stamp": "^0.2.2",
     "express": "^4.13.4",
+    "http": "0.0.0",
+    "jQuery": "^1.7.4",
     "jade": "^1.11.0",
+    "jquery": "^3.1.0",
+    "pg-format": "^1.0.2",
     "pg-promise": "^3.9.1",
-    "pug": "^2.0.0-alpha6"
+    "pug": "^2.0.0-alpha6",
+    "redis": "^2.6.2"
   },
   "devDependencies": {},
   "scripts": {

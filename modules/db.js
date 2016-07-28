@@ -2,7 +2,7 @@ var fs = require('fs'),
 		config = require('../config/config').postgres,
 		pg = require('pg');
 
-function connectDB(cb) { 							//коннект к ДБ
+function connectDB(cb) {
 	var conString = config;
 	var client = new pg.Client(conString);
 	client.connect(function(err) {
