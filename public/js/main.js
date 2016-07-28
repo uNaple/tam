@@ -4,7 +4,8 @@ var xhr = new XMLHttpRequest();
 $(document).ready(function() {
 
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
-			completeTasks = new Array(),
+			deletedTasks = new Array(),
+			availableTasks = new Array(),
 			myTasks 		= new Array(),
 			listStatus	= new Array(),
 			listTypes 	= new Array(),
@@ -65,53 +66,75 @@ $(document).ready(function() {
 		}
 	});
 
-
 	$('#buttonMyTasks').click(function() {
 			// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
+		$('#buttonAddTask1').show();
+		$('#buttonAddTask2').show();
 		$('#titlePage').text('Мои задачи');
 		console.debug('myTasks func');
-		var id = 679;
-		getTasks(function(arr) {
-			if(checkExist(myTasks)) {
-				console.debug('checkExist is not empty');
-				showAll(myTasks);
-			} else {
-				console.debug('checkExist is empty');
-				for(var key in arr) {
-					if(arr[key].director === id) {
-						myTasks.push(allTasks[key]);
-					}
-				}
-				showAll(myTasks);
-			}
-		})
+		getTasks(buttMyTasks);
 	});
+
+	function buttMyTasks(arr) {
+		var id = 679;
+		if(checkExist(myTasks)) {
+			console.debug('checkExist is not empty');
+			showAll(myTasks);
+		} else {
+			console.debug('checkExist is empty');
+			for(var key in arr) {
+				if(arr[key].director === id && arr[key].status !== 7 ) {
+					myTasks[arr[key].id] = (allTasks[key]);
+				}
+			}
+			showAll(myTasks);
+		}
+	}
 
 	$('#buttonAllTasks').click(function() {
+		$('#buttonAddTask1').show();
+		$('#buttonAddTask2').show();
 		console.debug($('#titlePage').text('Все задачи'));
 		console.debug('allTasks func');
-		getTasks(function(arr) {
-			showAll(arr);
-		});
+		getTasks(buttAvailableTasks);
 	});
 
-	// $('#buttonCompleteTasks').click(function() {
-	// 	console.debug($('#titlePage').text('Выполненные задачи'));
-	// 	getTasks(function(arr) {
-	// 			if(checkExist(completeTasks)) {
-	// 			console.debug('checkExist is not empty');
-	// 			showAll(completeTasks);
-	// 		} else {
-	// 			console.debug('checkExist is empty');
-	// 			for(var key in arr) {
-	// 				if(arr[key].status === '2') {
-	// 					completeTasks.push(allTasks[key]);
-	// 				}
-	// 			}
-	// 			showAll(completeTasks);
-	// 		}
-	// 	});
-	// })
+	function buttAvailableTasks(arr) {
+		if(checkExist(availableTasks)) {
+			console.debug('checkExist is not empty');
+			showAll(availableTasks);
+		} else {
+			console.debug('checkExist is empty');
+			for(var key in arr) {
+				if(arr[key].status !== 7 ) {
+					availableTasks[arr[key].id] = (allTasks[key]);
+				}
+			}
+			showAll(availableTasks);
+		}
+	}
+
+	$('#buttonDeletedTasks').click(function() {
+		console.debug($('#titlePage').text('Удаленные задачи'));
+		$('#buttonAddTask1').hide();
+		$('#buttonAddTask2').hide();
+		getTasks(buttDelTasks);
+	})
+
+	function buttDelTasks(arr) {
+		if(checkExist(deletedTasks)) {
+			console.debug('checkExist is not empty');
+			showAll(deletedTasks);
+		} else {
+			console.debug('checkExist is empty');
+			for(var key in arr) {
+				if(arr[key].status === 7) {
+					deletedTasks[arr[key].id] = (allTasks[key]);
+				}
+			}
+			showAll(deletedTasks);
+		}
+	}
 
 	function sendTask(task) {
 		$.ajax({
@@ -128,12 +151,14 @@ $(document).ready(function() {
 						console.debug(result.task);
 						allTasks[result.task.id] = result.task;
 						if($('#titlePage').text() == 'Мои задачи') {
-							myTasks[result.task.id] = result.task;
-							showAll(myTasks);
+							buttMyTasks(allTasks);
 						}
 						if($('#titlePage').text() == 'Все задачи') {
-							showAll(allTasks);
+							buttAvailableTasks(allTasks);
  						}
+ 						if($('#titlePage').text() == 'Удаленные задачи') {
+							buttDelTasks(allTasks);
+						}
 					}
 				}
 		});
@@ -154,7 +179,15 @@ $(document).ready(function() {
 						alert(result.text);
 						console.debug(task);
 						allTasks[task.id] = task;
-						showAll(allTasks);
+						if($('#titlePage').text() == 'Мои задачи') {
+							buttMyTasks(allTasks);
+						}
+						if($('#titlePage').text() == 'Все задачи') {
+							buttAvailableTasks(allTasks);
+ 						}
+ 						if($('#titlePage').text() == 'Удаленные задачи') {
+							buttDelTasks(allTasks);
+						}
 					}
 					console.debug(task);
 					console.debug(allTasks);
@@ -163,7 +196,7 @@ $(document).ready(function() {
 	}
 
 	function getTasks(cb) {
-		var params = 'status != 7';
+		var params = 'id != 0';
 		if(!checkExist(allTasks)) {
 			console.debug('checkExist is empty');
 			xhr.open('GET', '/getTasks?' + params, true);
