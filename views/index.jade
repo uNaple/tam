@@ -96,6 +96,7 @@ html
 										| 70% Increase in 30 Days
 							.jumbotron
 								form#panelTaskEdit(hidden='true', role='form')
+									button#buttonTaskAccept.btn.btn-primary.pull-right(type='button') Accept
 									.overlay
 										i.fa.fa-refresh.fa-spin
 									.form-group
@@ -107,13 +108,21 @@ html
 									.form-group
 										label Постановщик
 										select#taskDirector.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
+
+									.form-group
+										label Контроллер
+										select#taskController.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='controller')
+									.form-group
+										label Исполнитель
+										select#taskExecutor.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='executor')
+
 									.form-group
 										label Тип
 										select#taskType.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')
 									.form-group
 										label Статус
 										select#taskStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status')
-									button#buttonTaskAccept.btn.btn-primary(type='button') Accept
+
 								h4 Статистика
 								p
 									| Текущая длительность (тут надпись проекта или задачи ):

@@ -9,7 +9,6 @@ function myUser() {
 	this.group_permission 	= null;
 }
 
-
 function myTask(task) {
 	// this.id = null;
 	// this.name = null;
@@ -251,69 +250,3 @@ module.exports = {
 	myTask: myTask,
 	myUser: myUser
 }
-
-
-// myTask.prototype.checkDirector = function() {								//Если есть постановщик, то он должен быть из списка пользователей, такие же проверки для всех пользователей
-// 	var self = this;
-// 	// console.log(self);
-// 	return new Promise(function(resolve, reject) {
-// 		db.getUser(self.director, function(err, result) {
-// 			if(err) {
-// 				reject(err);
-// 			} else {
-// 				resolve(result);
-// 			}
-// 		})
-// 	}).then(function(result) {
-// 			console.log('Check director is OK');
-// 			return true;
-// 	}, function(err) {
-// 		console.log('Ошибка при загрузке пользователя ' + err);
-// 	});
-// }
-
-// myTask.prototype.checkController = function() {
-// 	var self = this;
-// 	// console.log(self);
-// 	return new Promise(function(resolve, reject) {
-// 		if(self.controller !== null) {
-// 			db.getUser(self.controller, function(err, result) {
-// 				if(err) {
-// 					reject(err);
-// 				} else {
-// 					resolve();
-// 				}
-// 			})
-// 		} else {
-// 			resolve();
-// 		}
-// 	}).then(function() {
-// 			console.log('Check controller is OK');
-// 			return true;
-// 	}, function(err) {
-// 		console.log('Ошибка при загрузке пользователя ' + err);
-// 	});
-// }
-
-// myTask.prototype.checkExecutor = function() {
-// 	var self = this;
-// 	// console.log(self);
-// 	return new Promise(function(resolve, reject) {
-// 		if(self.executor !== null) {
-// 			db.getUser(self.executor, function(err, result) {
-// 				if(err) {
-// 					reject(err);
-// 				} else {
-// 					resolve();
-// 				}
-// 			})
-// 		} else {
-// 			resolve();
-// 		}
-// 	}).then(function() {
-// 			console.log('Check executor is OK');
-// 			return true;
-// 	}, function(err) {
-// 		console.log('Ошибка при загрузке пользователя ' + err);
-// 	});
-// }

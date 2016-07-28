@@ -228,24 +228,6 @@ function updateTask (task, cb){                      							//обновить �
 	})
 }
 
-// function reassignTask(recieve, give) {														//Переназначить задание
-// 	//кто получает от кого получает
-// 	//меняем status на ожидание, в истории отмечаем что переназначили
-// 	connectDB(function(client){
-// 		client.query (`UPDATE tasks.tasks
-// 			SET executor = '${recieve}', status = '5'
-// 			WHERE executor = '${give}'`,
-// 		function(err, result){
-// 			if(err) {
-// 				console.log('Ошибка при переназначении ', err);
-// 			} else {
-// 				console.log('Переназначили успешно!');
-// 				// addHistory(client, 'reassignTask', typeOfAction[1]);
-// 			}
-// 		});
-// 	})
-// }
-
 //============ Получение
 function getUser(id, cb) {
 	connectDB(function(client) {

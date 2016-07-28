@@ -11,6 +11,7 @@ $(document).ready(function() {
 	getExtra();
 	// getTasks();
 
+//====
 	$('#buttonAddTask1').on('click', function(event) {
 		var task = {name: 'New Task1', director: '451', type: 1, status: 5};
 		var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
@@ -49,7 +50,6 @@ $(document).ready(function() {
 			}
 		}
 		console.debug(task);
-		// console.debug($('#buttonTaskAccept').data('new'));
 		if($('#buttonTaskAccept').data('id') !== 'false') {
 			console.debug('need update');
 			task.id = $('#buttonTaskAccept').data('id');
@@ -58,6 +58,34 @@ $(document).ready(function() {
 			console.debug('need add')
 			sendTask(task);
 		}
+	});
+
+
+	$('#buttonMyTasks').click(function() {
+			// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
+		console.debug('myTasks func');
+		var id = 679;
+		getTasks(function(arr) {
+			if(checkExist(myTasks)) {
+				console.debug('checkExist is not empty');
+				showAll(myTasks);
+			} else {
+				console.debug('checkExist is empty');
+				for(var key in arr) {
+					if(arr[key].director === id) {
+						myTasks.push(allTasks[key]);
+					}
+				}
+				showAll(myTasks);
+			}
+		})
+	});
+
+	$('#buttonAllTasks').click(function() {
+		console.debug('allTasks func');
+		getTasks(function(arr) {
+			showAll(arr);
+		});
 	});
 
 	function sendTask(task) {
@@ -94,7 +122,6 @@ $(document).ready(function() {
 				}
 		});
 	}
-
 
 	function getExtra() {
 		console.log('getExtra func');
@@ -140,42 +167,35 @@ $(document).ready(function() {
 		}
 	};
 
-	$('#buttonMyTasks').click(function() {
-			// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
-		console.debug('myTasks func');
-		var id = 679;
-		getTasks(function(arr) {
-			if(checkExist(myTasks)) {
-				console.debug('checkExist is not empty');
-				showAll(myTasks);
-			} else {
-				console.debug('checkExist is empty');
-				for(var key in arr) {
-					if(arr[key].director === id) {
-						myTasks.push(allTasks[key]);
-					}
-				}
-				showAll(myTasks);
-			}
-		})
-	});
-
-	$('#buttonAllTasks').click(function() {
-		console.debug('allTasks func');
-		getTasks(function(arr) {
-			showAll(arr);
-		});
-	});
-
-	function fillListUsers(director) {
+	function fillListUsers(task) {
 		$('#taskDirector').select2();
+		$('#taskController').select2();
+		$('#taskExecutor').select2();
 		$('#taskDirector').empty();
+		$('#taskController').empty();
+		$('#taskExecutor').empty();
 		for(var key in listUsers) {
-			if(key === director.toString()) {
-				$('#taskDirector').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
-				continue;
+			if(task.director !== null) {
+				if(key === task.director.toString()) {
+					$('#taskDirector').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
+				} else {
+					$('#taskDirector').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
+				}
 			}
-			$('#taskDirector').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
+			if(task.controller !== null) {
+				if(key === task.controller.toString()) {
+					$('#taskController').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
+				} else {
+					$('#taskController').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
+				}
+			}
+			if(task.executor !== null) {
+				if(key === task.executor.toString()) {
+					$('#taskExecutor').append('<option value="'+key+'" selected = "selected">'+ listUsers[key]+'</option>');
+				} else {
+					$('#taskExecutor').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
+				}
+			}
 		}
 	};
 
@@ -228,7 +248,7 @@ $(document).ready(function() {
 			$('#buttonTaskAccept').data('id', 'false');
 		}
 		// console.debug(task);
-		fillListUsers(task.director);
+		fillListUsers(task);
 		fillStaticLists(task);
 		showInfo(task);
 	}

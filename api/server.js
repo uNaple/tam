@@ -1,5 +1,5 @@
 "use strict"
-var myTask = require('./object').myTask;
+var myTask = require('./objectTask').myTask;
 
 var config 	= require('../config/config.js'),
 		express = require('express'),
