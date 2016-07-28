@@ -32,8 +32,8 @@ html
 									a()#buttonMyTasks Мои задачи
 								li
 									a()#buttonAllTasks Все задачи
-								li
-									a() Еще какие-то задачи
+								//- li
+									//- a()#buttonCompleteTasks Выполненные задачи
 						li
 							label.tree-toggle.nav-header Пользователи
 							ul.nav.tree
@@ -53,7 +53,7 @@ html
 							a()
 								| Что-то
 				.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-					h3 Мои задачи
+					h3#titlePage Мои задачи
 					.row
 						.col-md-5.col-sm-12
 							h4.box-title
@@ -108,14 +108,12 @@ html
 									.form-group
 										label Постановщик
 										select#taskDirector.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
-
 									.form-group
 										label Контроллер
 										select#taskController.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='controller')
 									.form-group
 										label Исполнитель
-										select#taskExecutor.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='executor')
-
+										select#taskExecutor.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='executor', placeholder='enter executor')
 									.form-group
 										label Тип
 										select#taskType.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')

@@ -33,7 +33,7 @@ function myTask(task) {
 
 	// this.reminder = null;
 
-	// console.log('before', this);
+	// console.log('before', task);
 	console.info('myTask func ');
 	this.init(task);
 }
@@ -95,7 +95,7 @@ myTask.prototype.checkParent = function() {								//Если есть роди�
 			return true;
 		}, function(err) {
 			console.error('checkParent error: ', err.message);
-			return false;
+			return err.message;
 	});
 }
 
@@ -105,7 +105,7 @@ myTask.prototype.checkType = function() {								//проверка правил
 	// console.log(self)
 	return new Promise(function(resolve, reject) {
 		if(self.type === '3' && self.parentid === null) {			//Если подзадача, то должен быть родитель
-			reject(new Error('У подзадачи должен быть родитель. Задача: ' + self.name));
+			reject(new Error('У подзадачи должен быть родитель. Задача: "' + self.name + '"'));
 		} else if(self.type === '2' && self.parentid !== null) {
 			reject(new Error('У проекта не может быть родителя'));
 		}	else {
@@ -116,7 +116,7 @@ myTask.prototype.checkType = function() {								//проверка правил
 		return true;
 	}, function(err) {
 		console.error('checkType error: ', err.message);
-		return false;
+		return err.message;
 	});
 }
 
@@ -153,7 +153,7 @@ myTask.prototype.checkUsers = function() {
 			return true;
 	}, function(err) {
 		console.error('checkUsers error: ' + err.message);
-		return false;
+		return err.message;
 	});
 }
 
@@ -169,8 +169,8 @@ myTask.prototype.checkThis = function(cb) {							//тут собрать вме
 		console.log(resultArray);
 		for(var i = 0; i < resultArray.length; i++) {
 			if(resultArray[i] !== true ) {
-
-				cb(new Error('checkThis find error'));
+				cb(new Error(resultArray[i]));
+				// cb(new Error('checkThis find error'));
 				break;
 			} else if(i == (resultArray.length-1)) {
 				console.info('checkThis is OK');
@@ -207,6 +207,7 @@ myTask.prototype.update = function(cb) {
 	this.checkThis(function(err, task) {
 		if(err) {
 			console.info(err.message);
+			cb(err);
 		} else {
 			db.updateTask(task, function(err, result) {
 				if(err) {
