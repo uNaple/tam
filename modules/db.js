@@ -187,6 +187,8 @@ function updateTask (task, cb){                      							//обновить �
 		}
 		if(task.controller !== null) {
 			query += `, controller = '${task.controller}'`;
+		} else {
+			query += `, controller = NULL`;
 		}
 		if(task.executor !== null) {
 			query += `, executor = '${task.executor}'`;

@@ -51,9 +51,9 @@ $(document).ready(function() {
 		console.debug(data);
 		for(var i = 0; i < data.length; i++) {
 			if(data[i].name !== null) {
-				// console.debug(data[i].name, $.trim($(data[i]).val()));
-				if($.trim($(data[i]).val()) === '') {
-					task[data[i].name] = null;
+				console.debug(data[i].name, $.trim($(data[i]).val()));
+				if($.trim($(data[i]).val()) === '' || $.trim($(data[i]).val()) === 'null') {
+					task[data[i].name] =  null;
 				} else {
 					task[data[i].name] = $.trim($(data[i]).val());
 				}
@@ -114,7 +114,6 @@ $(document).ready(function() {
 	}
 
 	function fillDeletedTasks() {
-		deletedTasks = [];
 		for(var key in allTasks) {
 			if(allTasks[key].status === 7 || allTasks[key].status === '7') {
 				deletedTasks[allTasks[key].id] = (allTasks[key]);
@@ -177,7 +176,6 @@ $(document).ready(function() {
 			fillDeletedTasks();
 		}
 	}
-
 
 	function sendTask(task) {
 		$.ajax({
@@ -250,6 +248,8 @@ $(document).ready(function() {
 		$('#taskExecutor').empty();
 		var a = new Date().getTime();
 		console.debug(a);
+		$('#taskController').append('<option value=null > </option>');
+		$('#taskExecutor').append('<option value=null> </option>');
 		for(var key in listUsers) {
 			$('#taskDirector').append('<option value="'+key+'" >'+ listUsers[key]+'</option>');
 			$('#taskController').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
@@ -260,9 +260,13 @@ $(document).ready(function() {
 		}
 		if(task.controller !== null) {
 			$('#taskController [value = "'+ task.controller +'" ]').attr('selected', "selected");
+		} else {
+			$('#taskDirector [value = null]').attr('selected', "selected");
 		}
 		if(task.executor !== null) {
 			$('#taskExecutor [value = "'+ task.Executor +'" ]').attr('selected', "selected");
+		} else {
+			$('#taskDirector [value = null]').attr('selected', "selected");
 		}
 			// if(task.director !== null) {
 			// 	if(key === task.director.toString()) {
