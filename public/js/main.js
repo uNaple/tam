@@ -70,6 +70,21 @@ $(document).ready(function() {
 		}
 	});
 
+	$('#taskType').change(function() {
+		console.debug($('#taskType').val());
+		if($('#taskType').val() == '3') {
+			$('#formTaskParent').show();
+			$('#taskParent').select2();
+			for(var key in availableTasks) {
+				console.debug(availableTasks[key]);
+				$('#taskParent').append('<option value="'+availableTasks[key].id+'" >'+ availableTasks[key].name +'</option>');
+			}
+		} else {
+			$('#taskParent').empty();
+			$('#formTaskParent').hide();
+		}
+	});
+
 	$('#buttonMyTasks').click(function() {
 			// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
 		$('#titlePage').text('Мои задачи');
