@@ -72,18 +72,28 @@ $(document).ready(function() {
 
 	$('#taskType').change(function() {
 		console.debug($('#taskType').val());
-		if($('#taskType').val() == '3') {
-			$('#formTaskParent').show();
-			$('#taskParent').select2();
-			for(var key in availableTasks) {
-				console.debug(availableTasks[key]);
-				$('#taskParent').append('<option value="'+availableTasks[key].id+'" >'+ availableTasks[key].name +'</option>');
-			}
+		showParent(null);
+	});
+
+	function showParent(parentid) {
+		if($('#taskType').val() == '3' || $('#taskParent').val() !== 'null') {
+				$('#taskParent').empty();
+				fillAvailableTasks();
+				$('#formTaskParent').show();
+				$('#taskParent').select2();
+				for(var key in availableTasks) {
+					if(availableTasks[key].name !== $('#taskName').val()) {
+						$('#taskParent').append('<option value="'+availableTasks[key].id+'" >'+ availableTasks[key].name +'</option>');
+					}
+				}
+				if(parentid !== 'null') {
+					$('#taskParent [value = "'+ parentid +'" ]').attr('selected', "selected");
+				}
 		} else {
 			$('#taskParent').empty();
 			$('#formTaskParent').hide();
 		}
-	});
+	}
 
 	$('#buttonMyTasks').click(function() {
 			// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
@@ -346,12 +356,16 @@ $(document).ready(function() {
 				if(key === 'description') {
 					$('#panelTaskEdit #taskDescription').val(task.description);
 				}
+				if(key === 'parentid') {
+					showParent(task.parentid);
+				}
 			}
 		}
 		$('#panelTaskEdit').show();
 	};
 
 	function onTaskClick() {
+
 		console.log('on task click', this);
 		var task = new Object();
 		if($(this).data('id')) {
@@ -378,6 +392,7 @@ $(document).ready(function() {
 			$(elem).data('id', arr[key].id);
 			$('#listTasks').append(elem);
 			elem.click(onTaskClick);
+
 		}
 	};
 
