@@ -207,6 +207,8 @@ function updateTask (task, cb){                      							//обновить �
 		}
 		if(task.parentid !== null) {
 			query += `, parentid = '${task.parentid}'`;
+		} else {
+			query += `, parentid = NULL`;
 		}
 		if(task.description !== null) {
 			query += `, description = convert_from(decode('${task.description}', 'base64'), 'UTF-8')`;

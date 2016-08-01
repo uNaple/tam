@@ -66,33 +66,41 @@ $(document).ready(function() {
 			updateTask(task);
 		} else {
 			console.debug('need add')
-			sendTask(task);
+			addTask(task);
 		}
 	});
 
-	$('#taskType').change(function() {
-		console.debug($('#taskType').val());
-		showParent(null);
-	});
+	// $('#taskType').change(function() {
+	// 	// console.debug($('#taskType').val());
+	// 	if($('#taskType').val() !== '3') {
+	// 		showParent(null);
+	// 	}
+	// });
 
+// || $('#taskParent').val() !== 'null'
+// $('#taskType').val() !== '2' ||
 	function showParent(parentid) {
-		if($('#taskType').val() == '3' || $('#taskParent').val() !== 'null') {
+		// if(parentid !== null && parentid !== 'null') {
 				$('#taskParent').empty();
-				fillAvailableTasks();
-				$('#formTaskParent').show();
-				$('#taskParent').select2();
-				for(var key in availableTasks) {
-					if(availableTasks[key].name !== $('#taskName').val()) {
-						$('#taskParent').append('<option value="'+availableTasks[key].id+'" >'+ availableTasks[key].name +'</option>');
+				fillAvailableTasks(function(arr) {
+					// $('#formTaskParent').show();
+					$('#taskParent').select2();
+					$('#taskParent').append('<option value=null > </option>');
+					for(var key in arr) {
+						if(arr[key].name !== $('#taskName').val()) {
+							$('#taskParent').append('<option value="'+availableTasks[key].id+'" >'+ availableTasks[key].name +'</option>');
+						}
 					}
-				}
-				if(parentid !== 'null') {
-					$('#taskParent [value = "'+ parentid +'" ]').attr('selected', "selected");
-				}
-		} else {
-			$('#taskParent').empty();
-			$('#formTaskParent').hide();
-		}
+					if(parentid !== 'null') {
+						$('#taskParent [value = "'+ parentid +'" ]').attr('selected', "selected");
+					} else {
+						$('#taskParent [value = null]').attr('selected', "selected");
+					}
+				})
+		// } else {
+		// 	$('#taskParent').empty();
+		// 	$('#formTaskParent').hide();
+		// }
 	}
 
 	$('#buttonMyTasks').click(function() {
@@ -120,31 +128,31 @@ $(document).ready(function() {
 		getTasks(fillDeletedTasks);
 	});
 
-	function fillMyTasks() {
+	function fillMyTasks(cb) {
 		for(var key in allTasks) {
 			if(allTasks[key].director === myId && allTasks[key].status !== 7 && allTasks[key].status !== '7'  ) {
 				myTasks[allTasks[key].id] = (allTasks[key]);
 			}
 		}
-		showAll(myTasks);
+		cb(myTasks);
 	}
 
-	function fillAvailableTasks() {
+	function fillAvailableTasks(cb) {
 		for(var key in allTasks) {
 			if(allTasks[key].status !== 7 && allTasks[key].status !== '7') {
 				availableTasks[allTasks[key].id] = (allTasks[key]);
 			}
 		}
-		showAll(availableTasks);
+		cb(availableTasks);
 	}
 
-	function fillDeletedTasks() {
+	function fillDeletedTasks(cb) {
 		for(var key in allTasks) {
 			if(allTasks[key].status === 7 || allTasks[key].status === '7') {
 				deletedTasks[allTasks[key].id] = (allTasks[key]);
 			}
 		}
-		showAll(deletedTasks);
+		cb(deletedTasks);
 	}
 
 	function getTasks(cb) {
@@ -161,11 +169,11 @@ $(document).ready(function() {
 					allTasks = JSON.parse(xhr.responseText);
 					allTasksQt = allTasks.length;
 					console.debug(allTasks);
-					cb();
+					cb(showAll);
 				}
 			}
 		} else {
-			cb();
+			cb(showAll);
 		}
 	};
 
@@ -192,17 +200,17 @@ $(document).ready(function() {
 		}
 
 		if($('#titlePage').text() == 'Мои задачи') {
-			fillMyTasks();
+			fillMyTasks(showAll);
 		}
 		if($('#titlePage').text() == 'Все задачи') {
-			fillAvailableTasks();
+			fillAvailableTasks(showAll);
 		}
 		if($('#titlePage').text() == 'Удаленные задачи') {
-			fillDeletedTasks();
+			fillDeletedTasks(showAll);
 		}
 	}
 
-	function sendTask(task) {
+	function addTask(task) {//запрос на добавление задачи
 		$.ajax({
 			url: 'addTask',
 			method: 'POST',
@@ -222,7 +230,7 @@ $(document).ready(function() {
 		});
 	}
 
-	function updateTask(task) {
+	function updateTask(task) {//запрос на обновление задачи
 		$.ajax({
 			url: 'updateTask',
 			method: 'POST',
@@ -365,10 +373,9 @@ $(document).ready(function() {
 	};
 
 	function onTaskClick() {
-
 		console.log('on task click', this);
 		var task = new Object();
-		if($(this).data('id')) {
+		if($(this).data('id')) {	//добавляю ид если есть, чтоб знать есть ли она уже или ее надо добавить
 			// console.debug($(this).data('id'));
 			task = allTasks[$(this).data('id')];
 			// console.debug('before', task);
@@ -384,8 +391,8 @@ $(document).ready(function() {
 	}
 
 	function showAll(arr) {
-		console.debug(arr);
 		console.debug('show all func');
+		console.debug(arr);
 		$('#listTasks').empty();
 		for(var key in arr) {
 			var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
