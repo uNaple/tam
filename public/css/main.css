@@ -160,6 +160,7 @@ body {
 .nav.tree>li>a {
     padding-left: 40px;
     color: #fff;
+    cursor: pointer;
 }
 
 label.nav-header {
@@ -479,10 +480,6 @@ span[class^=num_] {
     margin-left: -0.5em;
     display: inline-block;
     width: 3em
-}
-
-label {
-    font-weight: normal
 }
 
 .panel-body>a {

@@ -283,7 +283,7 @@ $(document).ready(function() {
 		$('#taskExecutor').empty();
 		var a = new Date().getTime();
 		console.debug(a);
-		$('#taskController').append('<option value=null > </option>');
+		$('#taskController').append('<option value=null> </option>');
 		$('#taskExecutor').append('<option value=null> </option>');
 		for(var key in listUsers) {
 			$('#taskDirector').append('<option value="'+key+'" >'+ listUsers[key]+'</option>');
