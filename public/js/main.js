@@ -19,8 +19,8 @@ $(document).ready(function() {
 
 //====
 	$('#buttonAddTask1').on('click', function(event) {
-		getTasks(function(flag) {
-			var task = {name: 'New Task1', director: myId, type: 1, status: 5};
+		getTasks(function(cb) {
+			var task = {name: 'New Task1', director: myId, type: 1, status: 5, parentid: null};
 			var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
 			$(elem).data('name', task.name)
 						 .data('director', task.director)
@@ -28,11 +28,12 @@ $(document).ready(function() {
 						 .data('status', task.status);
 			$('#listTasks').prepend(elem);
 			elem.click(onTaskClick);
+			showParent(null);
 		});
 	});
 
 	$('#buttonAddTask2').on('click', function(event) {
-		getTasks(function(arr) {
+		getTasks(function(cb) {
 			var task = {name: 'New Task1', director: myId, type: 1, status: 5};
 			var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
 			$(elem).data('name', task.name)
@@ -41,6 +42,7 @@ $(document).ready(function() {
 						 .data('status', task.status);
 			$('#listTasks').append(elem);
 			elem.click(onTaskClick);
+			showParent(null);
 		});
 	});
 
@@ -81,10 +83,10 @@ $(document).ready(function() {
 // $('#taskType').val() !== '2' ||
 	function showParent(parentid) {
 		// if(parentid !== null && parentid !== 'null') {
+				$('#taskParent').select2();
 				$('#taskParent').empty();
 				fillAvailableTasks(function(arr) {
 					// $('#formTaskParent').show();
-					$('#taskParent').select2();
 					$('#taskParent').append('<option value=null > </option>');
 					for(var key in arr) {
 						if(arr[key].name !== $('#taskName').val()) {
