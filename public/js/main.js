@@ -58,6 +58,11 @@ $(document).ready(function() {
 		// }
 	};
 
+	function changeName() {
+		console.debug('changeName func.');
+		console.debug($(elem).find('.text.taskedit').text());
+	}
+
 	$('#buttonAddTask1').on('click', function(event) {
 		getTasks(function(cb) {
 			var task = {name: 'New Task1', director: myId, type: 1, status: 5, parentid: null};
@@ -87,7 +92,7 @@ $(document).ready(function() {
 	});
 
 	$('#buttonTaskAccept').click(function(event) {
-		console.info('task add click');
+		console.info('task accept click');
 		var data = $('#panelTaskEdit [name]');
 		var task = new Object();
 		// console.debug(data);
@@ -110,6 +115,7 @@ $(document).ready(function() {
 			console.info('need add')
 			addTask(task);
 		}
+		changeSort();
 	});
 
 // || $('#taskParent').val() !== 'null'
@@ -412,11 +418,10 @@ $(document).ready(function() {
 		console.debug(mySort);
 		if($('#titlePage').text() == 'Мои задачи' && mySort.length !== 0) {
 			for(var i = 0; i < mySort.length; i++) {
-				// console.debug(allTasks[mySort[i]]);
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id);
-				// $(elem).find('.handle.ui-sortable-handle').mouseup(changeSort);
+				$(elem).find('.text.taskedit').change(changeName);
 				elem.click(onTaskClick);
 			};
 		} else {
@@ -424,7 +429,7 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', arr[key].id);
-				// $(elem).find('.handle.ui-sortable-handle').mouseup(changeSort);
+				$(elem).find('.text.taskedit').change(changeName);
 				elem.click(onTaskClick);
 			};
 		}
