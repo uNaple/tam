@@ -3,17 +3,6 @@ var xhr = new XMLHttpRequest();
 
 $(document).ready(function() {
 
-	// var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-	// target = document.querySelector('#listTasks');
-	// var observer = new MutationObserver(function(mutations) {
-	// 		// console.log(mutations);
-	//     mutations.forEach(function(mutation) {
-	//         console.log('Mutation:', mutation);
-	//     });
-	// });
-	// var config = {childList: true, attributes: true, characterData: true};
-	// observer.observe(target, config);
-
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
 			// deletedTasksQt	= 0,
@@ -44,9 +33,9 @@ $(document).ready(function() {
 		return arr;
 	}
 
-	function changeSort() {
+	function changeSort(){
 		// console.debug(event);
-		console.info('changeSort func.');
+		console.info('changeSort func.: mouse up');
 		if($('#titlePage').text() == 'Мои задачи') {
 			mySort = sortTasks();
 		}
@@ -141,7 +130,6 @@ $(document).ready(function() {
 
 	// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
 	$('#buttonMyTasks').click(function() {
-		changeSort();
 		console.info('myTasks butt.');
 		$('#titlePage').text('Мои задачи');
 		$('#buttonAddTask1').show();
@@ -150,7 +138,6 @@ $(document).ready(function() {
 	});
 
 	$('#buttonAllTasks').click(function() {
-		changeSort();
 		console.info('allTasks butt.');
 		$('#titlePage').text('Все задачи');
 		$('#buttonAddTask1').show();
@@ -159,7 +146,6 @@ $(document).ready(function() {
 	});
 
 	$('#buttonDeletedTasks').click(function() {
-		changeSort();
 		console.info('deletedTasks butt.');
 		$('#titlePage').text('Удаленные задачи');
 		$('#buttonAddTask1').hide();
@@ -410,13 +396,14 @@ $(document).ready(function() {
 		console.info('show all func ', arr);
 		$('#listTasks').empty();
 		console.debug(mySort);
+
 		if($('#titlePage').text() == 'Мои задачи' && mySort.length !== 0) {
 			for(var i = 0; i < mySort.length; i++) {
 				// console.debug(allTasks[mySort[i]]);
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id);
-				// $(elem).find('.handle.ui-sortable-handle').mouseup(changeSort);
+				$(elem).find('#listTasks').focusout(changeSort);
 				elem.click(onTaskClick);
 			};
 		} else {
@@ -424,7 +411,7 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', arr[key].id);
-				// $(elem).find('.handle.ui-sortable-handle').mouseup(changeSort);
+				$(elem).find('#listTasks').focusout(changeSort);
 				elem.click(onTaskClick);
 			};
 		}
