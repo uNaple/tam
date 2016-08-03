@@ -1,18 +1,19 @@
 // var $ = require('jquery-3.0.0');
 var xhr = new XMLHttpRequest();
+var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
 $(document).ready(function() {
 
-	// var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-	// target = document.querySelector('#listTasks');
-	// var observer = new MutationObserver(function(mutations) {
-	// 		// console.log(mutations);
-	//     mutations.forEach(function(mutation) {
-	//         console.log('Mutation:', mutation);
-	//     });
-	// });
-	// var config = {childList: true, attributes: true, characterData: true};
-	// observer.observe(target, config);
+	// target = document.querySelector('#listTasks li');
+	var observer = new MutationObserver(function(mutations) {
+	    mutations.forEach(function(mutation) {
+		    if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
+		    	$('#panelTaskEdit #taskName').val(mutation.target.data);
+	        console.log('Mutation:', mutation.target);
+		    }
+	    });
+	});
+	var config = {characterData: true, subtree: true, childList: true, attributes: true};
 
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
@@ -40,7 +41,7 @@ $(document).ready(function() {
 				arr.push($(data[key]).data("id"));
 			}
 		}
-		console.debug(arr);
+		console.debug('sorting order',arr);
 		return arr;
 	}
 
@@ -60,7 +61,7 @@ $(document).ready(function() {
 
 	function changeName() {
 		console.debug('changeName func.');
-		console.debug($(elem).find('.text.taskedit').text());
+		console.debug($(this).text());
 	}
 
 	$('#buttonAddTask1').on('click', function(event) {
@@ -415,13 +416,13 @@ $(document).ready(function() {
 	function showAll(arr) {
 		console.info('show all func ', arr);
 		$('#listTasks').empty();
-		console.debug(mySort);
+		// console.debug(mySort);
 		if($('#titlePage').text() == 'Мои задачи' && mySort.length !== 0) {
 			for(var i = 0; i < mySort.length; i++) {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id);
-				$(elem).find('.text.taskedit').change(changeName);
+				$(elem).find('.text.taskedit').keydown(changeName);
 				elem.click(onTaskClick);
 			};
 		} else {
@@ -429,17 +430,19 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', arr[key].id);
-				$(elem).find('.text.taskedit').change(changeName);
+				$(elem).find('.text.taskedit').keydown(changeName);
 				elem.click(onTaskClick);
-			};
+			}
 		}
+		var target = document.querySelector('#listTasks');
+		observer.observe(target, config);
 	}
-
 
 // function() {
 //   var b = a(this).parents("li").first();
 //   b.toggleClass("done"), a("input", b).is(":checked") ? c.onCheck.call(b) : c.onUncheck.call(b)
 // }
+
 	function checkExist(obj) {//тут проверять вероятно будем из редиски
 		for(var key in obj) {
 			return true;
