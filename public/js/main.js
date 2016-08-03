@@ -3,17 +3,19 @@ var xhr = new XMLHttpRequest();
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 
 $(document).ready(function() {
+	getTasks(fillMyTasks);
 
-	// target = document.querySelector('#listTasks li');
 	var observer = new MutationObserver(function(mutations) {
 	    mutations.forEach(function(mutation) {
-		    if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
-		    	$('#panelTaskEdit #taskName').val(mutation.target.data);
-	        console.log('Mutation:', mutation.target);
-		    }
+		    // if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
+		    // 	$('#panelTaskEdit #taskName').val(mutation.target.data);
+		    // }
+	        console.debug('Mutation:', mutation);
 	    });
 	});
 	var config = {characterData: true, subtree: true, childList: true, attributes: true};
+	var target = document.querySelector('#taskName');
+	observer.observe(target, config);
 
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
@@ -54,16 +56,13 @@ $(document).ready(function() {
 		// if($('#titlePage').text() == 'Все задачи') {
 		// 	fillAvailableTasks(showAll);
 		// }
-		// if($('#titlePage').text() == 'Удаленные задачи') {
-		// 	fillDeletedTasks(showAll);
-		// }
 	};
 
-	function changeName() {
+	function changeName(e) {
 		console.debug('changeName func.');
-		if($(this).context.id) {
-			console.debug($(this).val().toString());
-			console.debug($('#buttonTaskAccept').data('id'));
+		if($(this).context.id) { //в панели редактирования
+			// console.debug($(this).val().toString());
+			// console.debug($('#buttonTaskAccept').data('id'));
 			var li = $('#listTasks li');
 			//хуй знает, пока что не придумал как менее затратно это сделать
 			for(var i = 0; i < li.length; i++) {
@@ -71,11 +70,14 @@ $(document).ready(function() {
 					$(li[i]).find('.text.taskedit').text($(this).val());
 				}
 			}
-		} else {
-			console.debug($(this));
+		} else { //в списке задач
+			if(e.keyCode === 13 && e.key === 'Enter') {
+				console.debug(e.keyCode, e.key);
+				$('#buttonTaskAccept').triggerHandler('click');
+			}
 			$('#panelTaskEdit #taskName').val($(this).text());
+			// console.debug($(this));
 		}
-
 	}
 
 	$('#buttonAddTask1').on('click', function(event) {
