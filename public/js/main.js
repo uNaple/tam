@@ -61,7 +61,7 @@ $(document).ready(function() {
 
 	function changeName() {
 		console.debug('changeName func.');
-		console.debug($(this).text());
+		$('#panelTaskEdit #taskName').val($(this).text());
 	}
 
 	$('#buttonAddTask1').on('click', function(event) {
@@ -422,7 +422,7 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id);
-				$(elem).find('.text.taskedit').keydown(changeName);
+				$(elem).find('.text.taskedit').keyup(changeName);
 				elem.click(onTaskClick);
 			};
 		} else {
@@ -430,12 +430,12 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', arr[key].id);
-				$(elem).find('.text.taskedit').keydown(changeName);
+				$(elem).find('.text.taskedit').keyup(changeName);
 				elem.click(onTaskClick);
 			}
 		}
-		var target = document.querySelector('#listTasks');
-		observer.observe(target, config);
+		// var target = document.querySelector('#listTasks');
+		// observer.observe(target, config);
 	}
 
 // function() {
