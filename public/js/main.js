@@ -61,7 +61,21 @@ $(document).ready(function() {
 
 	function changeName() {
 		console.debug('changeName func.');
-		$('#panelTaskEdit #taskName').val($(this).text());
+		if($(this).context.id) {
+			console.debug($(this).val().toString());
+			console.debug($('#buttonTaskAccept').data('id'));
+			var li = $('#listTasks li');
+			//хуй знает, пока что не придумал как менее затратно это сделать
+			for(var i = 0; i < li.length; i++) {
+				if($(li[i]).data('id') ===  $('#buttonTaskAccept').data('id')) {
+					$(li[i]).find('.text.taskedit').text($(this).val());
+				}
+			}
+		} else {
+			console.debug($(this));
+			$('#panelTaskEdit #taskName').val($(this).text());
+		}
+
 	}
 
 	$('#buttonAddTask1').on('click', function(event) {
@@ -418,7 +432,7 @@ $(document).ready(function() {
 		$('#listTasks').empty();
 		// console.debug(mySort);
 		if($('#titlePage').text() == 'Мои задачи' && mySort.length !== 0) {
-			for(var i = 0; i < mySort.length; i++) {
+			for(var i = 0; i < mySort.length; i++) { //вынести в функцию два куска и просто проходить по ней сколько то раз
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id);
@@ -434,6 +448,7 @@ $(document).ready(function() {
 				elem.click(onTaskClick);
 			}
 		}
+		$('#taskName').keyup(changeName);
 		// var target = document.querySelector('#listTasks');
 		// observer.observe(target, config);
 	}
