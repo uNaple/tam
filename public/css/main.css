@@ -570,3 +570,6 @@ form.create:first-of-type {
     height: 32px !important;
 }
 
+.glyphicon.glyphicon-trash {
+    font-size: 24px;
+}

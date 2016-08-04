@@ -56,9 +56,6 @@ html
 				.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
 					.row
 						.col-md-6.col-sm-12
-							button#buttonAddTask1.btn.btn-default(type='button')
-								i.fa.fa-plus
-								| Add task
 							.box.box-primary(style='position: relative; left: 0px; top: 0px;')
 								.box-header.ui-sortable-handle
 									i.ion.ion-clipboard
@@ -75,6 +72,12 @@ html
 												a(href='#') 3
 											li
 												a(href='#') »
+								//- a.btn.btn-app
+								//-   i.fa.fa-edit
+								//-   |  Add Task
+								button#buttonAddTask1.btn.btn-default(type='button')
+									i.fa.fa-plus
+									| Add task
 								.box-body
 									ul#listTasks.todo-list.ui-sortable
 								.box-footer.clearfix.no-border
@@ -95,34 +98,47 @@ html
 										| 70% Increase in 30 Days
 							.box.box-primary
 								form#panelTaskEdit(hidden='true', role='form')
-									button#buttonTaskAccept.btn.btn-primary.pull-right(type='button') Accept
+									//- button#buttonTaskAccept.btn.btn-primary.pull-right(type='button') Accept
 									//- .overlay
-									//- 	i.fa.fa-refresh.fa-spin
+									//-   i.fa.fa-refresh.fa-spin
 									h4.box-title Редактирование задачи
+										a#buttonTaskAccept.btn.bg-blue.btn-app.pull-right
+											i.fa.fa-save
+											|  Apply
 									.form-group
 										label Название
 										input#taskName.form-control(placeholder='task name', type='text', name='name')
 									.form-group
 										label Описание
 										textarea#taskDescription.form-control(rows='3', placeholder='Описание ',  name='description')
-									.form-group
-										label Постановщик
-										select#taskDirector.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
-									.form-group
-										label Контроллер
-										select#taskController.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='controller')
-									.form-group
-										label Исполнитель
-										select#taskExecutor.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='executor')
-									.form-group
-										label Тип
-										select#taskType.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')
-									.form-group
-										label Статус
-										select#taskStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status')
-									.form-group#formTaskParent
-										label Родитель
-										select#taskParent.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='parentid')
+									span.glyphicon.glyphicon-trash
+									.box.box-default.collapsed-box
+										.box-header.with-border
+											h3.box-title More
+											.box-tools.pull-right
+												button#buttonShowExtra.btn.btn-box-tool(data-widget='collapse')
+													i.fa.fa-minus
+											// /.box-tools
+										// /.box-header
+										.box-body
+											.form-group
+												label Постановщик
+												select#taskDirector.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='director')
+											.form-group
+												label Контроллер
+												select#taskController.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='controller')
+											.form-group
+												label Исполнитель
+												select#taskExecutor.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='executor')
+											.form-group
+												label Тип
+												select#taskType.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='type')
+											.form-group
+												label Статус
+												select#taskStatus.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='status')
+											.form-group#formTaskParent
+												label Родитель
+												select#taskParent.form-control.select2.select2-hidden-accessible(aria-hidden='true', tabindex='-1', style='width: 100%;', name='parentid')
 
 								h4 Статистика
 								p
@@ -138,6 +154,12 @@ html
 		script(src='/js/custombox.min.js')
 		script(src='/js/bootstrap.min.js')
 		script(src='/js/bootstrap.js')
+		//- script(src="plugins/jvectormap/jquery-jvectormap-world-mill-en.js")
+		//- script(src="plugins/jvectormap/jquery-jvectormap-1.2.2.min.js")
+		//- script(src="/plugins/knob/jquery.knob.js")
+		script(src='/js/moment.min.js')
+		//- script(src='/plugins/daterangepicker/daterangepicker.js')
+		//- script(src='/plugins/datepicker/bootstrap-datepicker.js')
 		script(src='/js/app.js')
 		script(src='/js/main.js')
 		script(src='/js/pages/dashboard.js')

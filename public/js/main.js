@@ -123,7 +123,7 @@ $(document).ready(function() {
 		// console.debug(data);
 		for(var i = 0; i < data.length; i++) {
 			if(data[i].name !== null) {
-				console.debug(data[i].name, $.trim($(data[i]).val()));
+				// console.debug(data[i].name, $.trim($(data[i]).val()));
 				if($.trim($(data[i]).val()) === '' || $.trim($(data[i]).val()) === 'null') {
 					task[data[i].name] =  null;
 				} else {
@@ -401,41 +401,42 @@ $(document).ready(function() {
 
 	function showInfo(task) {
 		console.info('show info func');
-		// console.debug(task);
 		for(var key in task) {
 			if(key !== 'null') {
 				if(key === 'name') {
-					// console.debug(task.name);
 					$('#panelTaskEdit #taskName').val(task.name);
 				}
 				if(key === 'description') {
 					$('#panelTaskEdit #taskDescription').val(task.description);
 				}
-				if(key === 'parentid') {
-					showParent(task.parentid);
-				}
+				// if(key === 'parentid') {
+				// 	showParent(task.parentid);
+				// }
 			}
 		}
 		$('#panelTaskEdit').show();
 		$('#taskName').keydown(blockEnter).keyup(changeName);
-		// $('#taskName').keyup(changeName);
 	};
+
+	$('#buttonShowExtra').click(function() {
+		var task = allTasks[$('#buttonTaskAccept').data('id')];
+		fillListUsers(task);
+		fillStaticLists(task);
+		showParent(task.parentid);
+	})
+
 
 	function onTaskClick() {
 		console.log('on task click', this);
 		var task = new Object();
 		if($(this).data('id')) {	//добавляю ид если есть, чтоб знать есть ли она уже или ее надо добавить
-			// console.debug($(this).data('id'));
 			task = allTasks[$(this).data('id')];
-			// console.debug('before', task);
 			$('#buttonTaskAccept').data('id', $(this).data('id'));
 		} else {
 			task = $(this).data();
 			$('#buttonTaskAccept').data('id', 'false');
 		}
 		// console.debug('after', task);
-		fillListUsers(task);
-		fillStaticLists(task);
 		showInfo(task);
 	}
 
