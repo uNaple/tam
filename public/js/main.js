@@ -4,24 +4,17 @@ var MutationObserver = window.MutationObserver || window.WebKitMutationObserver 
 
 $(document).ready(function() {
 	getTasks(fillMyTasks);
-
-	var observer = new MutationObserver(function(mutations) {
-	    mutations.forEach(function(mutation) {
-		    // if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
-		    // 	$('#panelTaskEdit #taskName').val(mutation.target.data);
-		    // }
-	        console.debug('Mutation:', mutation);
-	    });
-	});
-	var config = {characterData: true, subtree: true, childList: true, attributes: true};
-	var target = document.querySelector('#taskName');
-	observer.observe(target, config);
-
-	function blockEnter(e) { //блокирую enter чтоб не было переноса строки и обновления страницы в списке задач и поле редактирования соответственно
-		if(e.key === 'Enter' && e.keyCode === 13) {
-			e.preventDefault();
-		}
-	}
+	// var observer = new MutationObserver(function(mutations) {
+	//     mutations.forEach(function(mutation) {
+	// 	    // if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
+	// 	    // 	$('#panelTaskEdit #taskName').val(mutation.target.data);
+	// 	    // }
+	//         console.debug('Mutation:', mutation);
+	//     });
+	// });
+	// var config = {characterData: true, subtree: true, childList: true, attributes: true};
+	// var target = document.querySelector('#taskName');
+	// observer.observe(target, config);
 
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
@@ -98,7 +91,7 @@ $(document).ready(function() {
 						 .data('status', task.status);
 			$('#listTasks').prepend(elem);
 			elem.click(onTaskClick);
-			showParent(null);
+			// showParent(null);
 		});
 	});
 
@@ -112,7 +105,7 @@ $(document).ready(function() {
 						 .data('status', task.status);
 			$('#listTasks').append(elem);
 			elem.click(onTaskClick);
-			showParent(null);
+			// showParent(null);
 		});
 	});
 
@@ -120,7 +113,7 @@ $(document).ready(function() {
 		console.info('task accept click');
 		var data = $('#panelTaskEdit [name]');
 		var task = new Object();
-		// console.debug(data);
+		console.debug(data);
 		for(var i = 0; i < data.length; i++) {
 			if(data[i].name !== null) {
 				// console.debug(data[i].name, $.trim($(data[i]).val()));
@@ -402,12 +395,17 @@ $(document).ready(function() {
 	function showInfo(task) {
 		console.info('show info func');
 		for(var key in task) {
+			console.debug(task[key], key);
 			if(key !== 'null') {
 				if(key === 'name') {
 					$('#panelTaskEdit #taskName').val(task.name);
 				}
 				if(key === 'description') {
 					$('#panelTaskEdit #taskDescription').val(task.description);
+				}
+				if(key === 'director') {
+					$('#taskDirector').append('<option value="'+task.director+'" ></option>');
+					$('#taskDirector [value = "'+ task.director +'" ]').attr('selected', "selected");
 				}
 				// if(key === 'parentid') {
 				// 	showParent(task.parentid);
@@ -418,15 +416,22 @@ $(document).ready(function() {
 		$('#taskName').keydown(blockEnter).keyup(changeName);
 	};
 
+	function blockEnter(e) { //блокирую enter чтоб не было переноса строки и обновления страницы в списке задач и поле редактирования соответственно
+		if(e.key === 'Enter' && e.keyCode === 13) {
+			e.preventDefault();
+		}
+	}
+
 	$('#buttonShowExtra').click(function() {
-		var task = allTasks[$('#buttonTaskAccept').data('id')];
+		var task = allTasks[$('#buttonTaskAccept').data('id')] || {name: 'New Task1', director: myId, type: 1, status: 5, parentid: null};
 		fillListUsers(task);
 		fillStaticLists(task);
 		showParent(task.parentid);
 	})
 
-
 	function onTaskClick() {
+		$('#panelTaskExtra').addClass('collapsed-box');
+		$('#panelTaskExtra .box-body').css('display', 'none');
 		console.log('on task click', this);
 		var task = new Object();
 		if($(this).data('id')) {	//добавляю ид если есть, чтоб знать есть ли она уже или ее надо добавить
