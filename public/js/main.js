@@ -60,8 +60,9 @@ $(document).ready(function() {
 	function changeName(e) {
 		console.debug('changeName func.');
 		if($(this).context.id) { //смена имени в панели редактирования
-			// if(e.key === 'Enter' && e.keyCode === 13) {
-			// 	e.preventDefault();
+			// if(e.keyCode === 13 && e.key === 'Enter') {
+			// 	console.debug(e.keyCode, e.key);
+			// 	$('#buttonTaskAccept').triggerHandler('click');
 			// }
 			var li = $('#listTasks li');
 			//хуй знает, пока что не придумал как менее затратно это сделать
@@ -70,7 +71,6 @@ $(document).ready(function() {
 					$(li[i]).find('.text.taskedit').text($(this).val());
 				}
 			}
-
 		} else { //смена имени в списке задач
 			if(e.keyCode === 13 && e.key === 'Enter') {
 				console.debug(e.keyCode, e.key);
@@ -133,7 +133,7 @@ $(document).ready(function() {
 			console.info('need add')
 			addTask(task);
 		}
-		changeSort();
+		// changeSort();
 	});
 
 // || $('#taskParent').val() !== 'null'
@@ -288,6 +288,7 @@ $(document).ready(function() {
 					alert(result.text);
 					console.debug(result.task);
 					allTasks[result.task.id] = result.task;
+					changeSort();
 					checkThisTask(result.task);
 				}
 			}
@@ -308,6 +309,7 @@ $(document).ready(function() {
 					alert(result.text);
 					allTasks[task.id] = task;
 					console.debug(task);
+					changeSort();
 					checkThisTask(task);
 				}
 			}
@@ -344,7 +346,7 @@ $(document).ready(function() {
 		$('#taskController').empty();
 		$('#taskExecutor').empty();
 		var a = new Date().getTime();
-		// console.debug(a);
+		console.debug(task);
 		$('#taskController').append('<option value=null> </option>');
 		$('#taskExecutor').append('<option value=null> </option>');
 		for(var key in listUsers) {
@@ -353,15 +355,18 @@ $(document).ready(function() {
 			$('#taskExecutor').append('<option value="'+key+'">'+ listUsers[key]+'</option>');
 		}
 		if(task.director !== null) {
+			// console.debug(task.director);
 			$('#taskDirector [value = "'+ task.director +'" ]').attr('selected', "selected");
 		}
 		if(task.controller !== null) {
+			// console.debug(task.controller);
 			$('#taskController [value = "'+ task.controller +'" ]').attr('selected', "selected");
 		} else {
 			$('#taskDirector [value = null]').attr('selected', "selected");
 		}
 		if(task.executor !== null) {
-			$('#taskExecutor [value = "'+ task.Executor +'" ]').attr('selected', "selected");
+			// console.debug(task.executor);
+			$('#taskExecutor [value = "'+ task.executor +'" ]').attr('selected', "selected");
 		} else {
 			$('#taskDirector [value = null]').attr('selected', "selected");
 		}
@@ -395,7 +400,7 @@ $(document).ready(function() {
 	function showInfo(task) {
 		console.info('show info func');
 		for(var key in task) {
-			console.debug(task[key], key);
+			// console.debug(task[key], key);
 			if(key !== 'null') {
 				if(key === 'name') {
 					$('#panelTaskEdit #taskName').val(task.name);
@@ -406,6 +411,14 @@ $(document).ready(function() {
 				if(key === 'director') {
 					$('#taskDirector').append('<option value="'+task.director+'" ></option>');
 					$('#taskDirector [value = "'+ task.director +'" ]').attr('selected', "selected");
+				}
+				if(key === 'type') {
+					$('#taskType').append('<option value="'+task.type+'" ></option>');
+					$('#taskType [value = "'+ task.type +'" ]').attr('selected', "selected");
+				}
+				if(key === 'status') {
+					$('#taskStatus').append('<option value="'+task.status+'" ></option>');
+					$('#taskStatus [value = "'+ task.status +'" ]').attr('selected', "selected");
 				}
 				// if(key === 'parentid') {
 				// 	showParent(task.parentid);
@@ -427,6 +440,21 @@ $(document).ready(function() {
 		fillListUsers(task);
 		fillStaticLists(task);
 		showParent(task.parentid);
+	})
+
+	$('#buttonDeleteTask').click(function(e) {
+		// console.debug($('#buttonTaskAccept').data('id'));
+		console.debug(allTasks[$('#buttonTaskAccept').data('id')]);
+		// allTasks[$('#buttonTaskAccept').data('id')];
+		// console.debug($(this));
+		$('#taskStatus').append('<option value="'+ 7 +'" ></option>');
+		$('#taskStatus [value = 7]').attr('selected', "selected");
+		for(var i = 0; i < mySort.length; i++) {
+			if(mySort[i] === $('#buttonTaskAccept').data('id')) {
+				delete mySort[i];
+			}
+		}
+		$('#buttonTaskAccept').triggerHandler('click');
 	})
 
 	function onTaskClick() {
