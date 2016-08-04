@@ -17,6 +17,12 @@ $(document).ready(function() {
 	var target = document.querySelector('#taskName');
 	observer.observe(target, config);
 
+	function blockEnter(e) { //блокирую enter чтоб не было переноса строки и обновления страницы в списке задач и поле редактирования соответственно
+		if(e.key === 'Enter' && e.keyCode === 13) {
+			e.preventDefault();
+		}
+	}
+
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
 			// deletedTasksQt	= 0,
@@ -60,9 +66,10 @@ $(document).ready(function() {
 
 	function changeName(e) {
 		console.debug('changeName func.');
-		if($(this).context.id) { //в панели редактирования
-			// console.debug($(this).val().toString());
-			// console.debug($('#buttonTaskAccept').data('id'));
+		if($(this).context.id) { //смена имени в панели редактирования
+			// if(e.key === 'Enter' && e.keyCode === 13) {
+			// 	e.preventDefault();
+			// }
 			var li = $('#listTasks li');
 			//хуй знает, пока что не придумал как менее затратно это сделать
 			for(var i = 0; i < li.length; i++) {
@@ -70,7 +77,8 @@ $(document).ready(function() {
 					$(li[i]).find('.text.taskedit').text($(this).val());
 				}
 			}
-		} else { //в списке задач
+
+		} else { //смена имени в списке задач
 			if(e.keyCode === 13 && e.key === 'Enter') {
 				console.debug(e.keyCode, e.key);
 				$('#buttonTaskAccept').triggerHandler('click');
@@ -409,6 +417,8 @@ $(document).ready(function() {
 			}
 		}
 		$('#panelTaskEdit').show();
+		$('#taskName').keydown(blockEnter).keyup(changeName);
+		// $('#taskName').keyup(changeName);
 	};
 
 	function onTaskClick() {
@@ -438,7 +448,7 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id);
-				$(elem).find('.text.taskedit').keyup(changeName);
+				$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 				elem.click(onTaskClick);
 			};
 		} else {
@@ -446,11 +456,10 @@ $(document).ready(function() {
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', arr[key].id);
-				$(elem).find('.text.taskedit').keyup(changeName);
+				$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 				elem.click(onTaskClick);
 			}
 		}
-		$('#taskName').keyup(changeName);
 		// var target = document.querySelector('#listTasks');
 		// observer.observe(target, config);
 	}

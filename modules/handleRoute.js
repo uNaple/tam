@@ -84,7 +84,7 @@ function reqAddTask(req, res) {
 
 function reqUpdateTask(req, res) {
 	console.info('Request /updateTask');
-	console.log('reqUpdateTask', req);
+	console.log('reqUpdateTask');
 	var task = new myTask(req.body);
 	console.info(task);
 	task.update(function(err) {
