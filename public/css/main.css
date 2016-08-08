@@ -542,6 +542,8 @@ form.create:first-of-type {
     /*background-color: rgba(0,0,0,.1);*/
     outline: none;
     min-height: 1.5em;
+    background: transparent;
+    border: 0;
 }
 
 .flexrow {

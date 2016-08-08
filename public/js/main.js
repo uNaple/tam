@@ -4,6 +4,8 @@ var MutationObserver = window.MutationObserver || window.WebKitMutationObserver 
 
 $(document).ready(function() {
 	getTasks(fillMyTasks);
+
+
 	// var observer = new MutationObserver(function(mutations) {
 	//     mutations.forEach(function(mutation) {
 	// 	    // if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
@@ -13,8 +15,10 @@ $(document).ready(function() {
 	//     });
 	// });
 	// var config = {characterData: true, subtree: true, childList: true, attributes: true};
-	// var target = document.querySelector('#taskName');
+	// var target = document.querySelector('#listTasks');
 	// observer.observe(target, config);
+
+
 
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
@@ -31,6 +35,14 @@ $(document).ready(function() {
 	// getTasks();
 
 //====
+
+	$('#listTasks').bind('sortupdate', function(e, ui) {
+		changeSort();
+		console.debug($('#listTasks').sortable('toArray'));
+	})
+
+	// $('#listTasks').sortable({'update':function(e, ui) {
+	// }});
 
 	function sortTasks() {
 		console.info('sortTasks func.');
@@ -59,24 +71,25 @@ $(document).ready(function() {
 
 	function changeName(e) {
 		console.debug('changeName func.');
-		if($(this).context.id) { //смена имени в панели редактирования
+		if($(this).context.id) { //смена имени в панели редактирования справа
 			// if(e.keyCode === 13 && e.key === 'Enter') {
 			// 	console.debug(e.keyCode, e.key);
 			// 	$('#buttonTaskAccept').triggerHandler('click');
 			// }
 			var li = $('#listTasks li');
 			//хуй знает, пока что не придумал как менее затратно это сделать
+			// mySort[$('#buttonTaskAccept').data('sortid')];
 			for(var i = 0; i < li.length; i++) {
 				if($(li[i]).data('id') ===  $('#buttonTaskAccept').data('id')) {
-					$(li[i]).find('.text.taskedit').text($(this).val());
+						$(li[i]).find('.text.taskedit').val($(this).val());
 				}
 			}
-		} else { //смена имени в списке задач
+		} else { //смена имени в списке задач слева
 			if(e.keyCode === 13 && e.key === 'Enter') {
 				console.debug(e.keyCode, e.key);
 				$('#buttonTaskAccept').triggerHandler('click');
 			}
-			$('#panelTaskEdit #taskName').val($(this).text());
+			$('#panelTaskEdit #taskName').val($(this).val());
 			// console.debug($(this));
 		}
 	}
@@ -84,13 +97,17 @@ $(document).ready(function() {
 	$('#buttonAddTask1').on('click', function(event) {
 		getTasks(function(cb) {
 			var task = {name: 'New Task1', director: myId, type: 1, status: 5, parentid: null};
-			var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
+			var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><input class="text taskedit" value="' + task.name + '"></li>');
 			$(elem).data('name', task.name)
 						 .data('director', task.director)
 						 .data('type', task.type)
 						 .data('status', task.status);
 			$('#listTasks').prepend(elem);
+			$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
+			$(elem).find(':input').focus();
 			elem.click(onTaskClick);
+			// elem.triggerHandler('click');
+			// mySort.unshift()
 			// showParent(null);
 		});
 	});
@@ -98,12 +115,13 @@ $(document).ready(function() {
 	$('#buttonAddTask2').on('click', function(event) {
 		getTasks(function(cb) {
 			var task = {name: 'New Task1', director: myId, type: 1, status: 5};
-			var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + task.name + '</span></li>');
+			var elem = $('<li class="flexrow" style="" ><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><input class="text taskedit" value="' + task.name + '"></span></li>');
 			$(elem).data('name', task.name)
 						 .data('director', task.director)
 						 .data('type', task.type)
 						 .data('status', task.status);
 			$('#listTasks').append(elem);
+			$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 			elem.click(onTaskClick);
 			// showParent(null);
 		});
@@ -130,6 +148,7 @@ $(document).ready(function() {
 			task.id = $('#buttonTaskAccept').data('id');
 			updateTask(task);
 		} else {
+			console.debug($('#buttonTaskAccept').data('id'));
 			console.info('need add')
 			addTask(task);
 		}
@@ -165,7 +184,6 @@ $(document).ready(function() {
 
 	// var params = 'director=' + encodeURIComponent(679); //тут id из сессии
 	$('#buttonMyTasks').click(function() {
-		changeSort();
 		console.info('myTasks butt.');
 		$('#titlePage').text('Мои задачи');
 		$('#buttonAddTask1').show();
@@ -174,7 +192,6 @@ $(document).ready(function() {
 	});
 
 	$('#buttonAllTasks').click(function() {
-		changeSort();
 		console.info('allTasks butt.');
 		$('#titlePage').text('Все задачи');
 		$('#buttonAddTask1').show();
@@ -183,7 +200,6 @@ $(document).ready(function() {
 	});
 
 	$('#buttonDeletedTasks').click(function() {
-		changeSort();
 		console.info('deletedTasks butt.');
 		$('#titlePage').text('Удаленные задачи');
 		$('#buttonAddTask1').hide();
@@ -285,11 +301,14 @@ $(document).ready(function() {
 				if(result.hasOwnProperty('err')) {
 					alert(result.err);
 				} else {
-					alert(result.text);
 					console.debug(result.task);
 					allTasks[result.task.id] = result.task;
+
+					// console.debug($(this));
+					// $(elem).data('id', result.task.id);
 					changeSort();
 					checkThisTask(result.task);
+					alert(result.text);
 				}
 			}
 		});
@@ -457,16 +476,18 @@ $(document).ready(function() {
 		$('#buttonTaskAccept').triggerHandler('click');
 	})
 
-	function onTaskClick() {
+	function onTaskClick(e) {
+		console.debug(e);
 		$('#panelTaskExtra').addClass('collapsed-box');
 		$('#panelTaskExtra .box-body').css('display', 'none');
 		console.log('on task click', this);
 		var task = new Object();
-		if($(this).data('id')) {	//добавляю ид если есть, чтоб знать есть ли она уже или ее надо добавить
+		if($(this).data('id')) {	//добавляю ид если есть (и беру задачу из массива задач), чтоб знать есть ли она уже или ее надо добавить
 			task = allTasks[$(this).data('id')];
 			$('#buttonTaskAccept').data('id', $(this).data('id'));
-		} else {
+		} else {	//беру задачу по-умолчанию, зашитую в скрипт и в ид пишу фолс
 			task = $(this).data();
+			console.debug($(this).data());
 			$('#buttonTaskAccept').data('id', 'false');
 		}
 		// console.debug('after', task);
@@ -479,19 +500,22 @@ $(document).ready(function() {
 		// console.debug(mySort);
 		if($('#titlePage').text() == 'Мои задачи' && mySort.length !== 0) {
 			for(var i = 0; i < mySort.length; i++) { //вынести в функцию два куска и просто проходить по ней сколько то раз
-				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + allTasks[mySort[i]].name + '</span></li>');
+				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><input class="text taskedit" value="' + allTasks[mySort[i]].name + '"></li>');
 				$('#listTasks').append(elem);
-				$(elem).data('id', allTasks[mySort[i]].id);
+				$(elem).data('id', allTasks[mySort[i]].id).data('sortid', i);
 				$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 				elem.click(onTaskClick);
 			};
 		} else {
 			for(var key in arr) {
-				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><span class="text taskedit" contenteditable="true" >' + arr[key].name + '</span></li>');
+				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><input class="text taskedit" value="' + arr[key].name + '"></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', arr[key].id);
 				$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 				elem.click(onTaskClick);
+				elem.blur(function() {
+					alert(e);
+				})
 			}
 		}
 		// var target = document.querySelector('#listTasks');
