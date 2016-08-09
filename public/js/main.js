@@ -5,7 +5,6 @@ var MutationObserver = window.MutationObserver || window.WebKitMutationObserver 
 $(document).ready(function() {
 	getTasks(fillMyTasks);
 
-
 	// var observer = new MutationObserver(function(mutations) {
 	//     mutations.forEach(function(mutation) {
 	// 	    // if(mutation.type === 'characterData' && mutation.target.nodeName === '#text') {
@@ -17,8 +16,6 @@ $(document).ready(function() {
 	// var config = {characterData: true, subtree: true, childList: true, attributes: true};
 	// var target = document.querySelector('#listTasks');
 	// observer.observe(target, config);
-
-
 
 	var allTasks 		= new Array(),//здесь хранятся задачи, потом редиска будет
 			mySort	= new Array(),
@@ -94,6 +91,8 @@ $(document).ready(function() {
 		}
 	}
 
+
+
 	$('#buttonAddTask1').on('click', function(event) {
 		getTasks(function(cb) {
 			var task = {name: 'New Task1', director: myId, type: 1, status: 5, parentid: null};
@@ -105,10 +104,9 @@ $(document).ready(function() {
 			$('#listTasks').prepend(elem);
 			$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 			$(elem).find(':input').focus();
+			$(elem).find(':input').blur(function() {$('#buttonTaskAccept').triggerHandler('click')});
 			elem.click(onTaskClick);
-			// elem.triggerHandler('click');
-			// mySort.unshift()
-			// showParent(null);
+			elem.triggerHandler('click');
 		});
 	});
 
@@ -122,8 +120,10 @@ $(document).ready(function() {
 						 .data('status', task.status);
 			$('#listTasks').append(elem);
 			$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
+			$(elem).find(':input').focus();
+			$(elem).find(':input').blur(function() {$('#buttonTaskAccept').triggerHandler('click')});
 			elem.click(onTaskClick);
-			// showParent(null);
+			elem.triggerHandler('click');
 		});
 	});
 
@@ -290,6 +290,22 @@ $(document).ready(function() {
 		}
 	}
 
+	function spawnNotification(theBody) {
+		if (!("Notification" in window)) {
+    	alert("This browser does not support desktop notification");
+  	} else if (Notification.permission === "granted") {
+    	// Если разрешено то создаем уведомлений
+    	var notification = new Notification(theBody);
+  	} else if (Notification.permission !== 'denied') {
+   	 Notification.requestPermission(function (permission) {
+      	// Если пользователь разрешил, то создаем уведомление
+      	if (permission === "granted") {
+        	var notification = new Notification(theBody);
+      	}
+    	});
+  	}
+	}
+
 	function addTask(task) { //запрос на добавление задачи
 		$.ajax({
 			url: 'addTask',
@@ -303,12 +319,12 @@ $(document).ready(function() {
 				} else {
 					console.debug(result.task);
 					allTasks[result.task.id] = result.task;
-
+					spawnNotification(result.text);
 					// console.debug($(this));
 					// $(elem).data('id', result.task.id);
 					changeSort();
 					checkThisTask(result.task);
-					alert(result.text);
+					// alert(result.text);
 				}
 			}
 		});
@@ -325,7 +341,8 @@ $(document).ready(function() {
 				if(result.hasOwnProperty('err')) {
 					alert('Ошибка:\n' + result.err);
 				} else {
-					alert(result.text);
+					spawnNotification(result.text);
+					// alert(result.text);
 					allTasks[task.id] = task;
 					console.debug(task);
 					changeSort();
