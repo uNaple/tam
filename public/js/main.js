@@ -91,8 +91,6 @@ $(document).ready(function() {
 		}
 	}
 
-
-
 	$('#buttonAddTask1').on('click', function(event) {
 		getTasks(function(cb) {
 			var task = {name: 'New Task1', director: myId, type: 1, status: 5, parentid: null};
@@ -100,11 +98,14 @@ $(document).ready(function() {
 			$(elem).data('name', task.name)
 						 .data('director', task.director)
 						 .data('type', task.type)
-						 .data('status', task.status);
+						 .data('status', task.status)
+						 .data('id', 'false');
+			// mySort.unshift('false');
 			$('#listTasks').prepend(elem);
 			$(elem).find('.text.taskedit').keydown(blockEnter).keyup(changeName);
 			$(elem).find(':input').focus();
 			$(elem).find(':input').blur(function() {$('#buttonTaskAccept').triggerHandler('click')});
+			console.debug(mySort);
 			elem.click(onTaskClick);
 			elem.triggerHandler('click');
 		});
@@ -143,7 +144,7 @@ $(document).ready(function() {
 			}
 		}
 		console.debug(task);
-		if($('#buttonTaskAccept').data('id') !== 'false') {
+		if($('#buttonTaskAccept').data('id') !== 'false') { //если не фолс то надо обновить, так как ИД уже есть
 			console.info('need update');
 			task.id = $('#buttonTaskAccept').data('id');
 			updateTask(task);
@@ -297,7 +298,7 @@ $(document).ready(function() {
     	// Если разрешено то создаем уведомлений
     	var notification = new Notification(theBody);
   	} else if (Notification.permission !== 'denied') {
-   	 Notification.requestPermission(function (permission) {
+   	 		Notification.requestPermission(function (permission) {
       	// Если пользователь разрешил, то создаем уведомление
       	if (permission === "granted") {
         	var notification = new Notification(theBody);
@@ -320,6 +321,13 @@ $(document).ready(function() {
 					console.debug(result.task);
 					allTasks[result.task.id] = result.task;
 					spawnNotification(result.text);
+					var arr = $('#listTasks li.flexrow');
+					for(var i = 0; i < arr.length; i++) {
+						if($(arr[i]).data('id') === 'false') {
+							// console.debug(result.task.id);
+							$(arr[i]).data('id', result.task.id);
+						}
+					}
 					// console.debug($(this));
 					// $(elem).data('id', result.task.id);
 					changeSort();
@@ -494,12 +502,12 @@ $(document).ready(function() {
 	})
 
 	function onTaskClick(e) {
-		console.debug(e);
+		// console.debug(e);
 		$('#panelTaskExtra').addClass('collapsed-box');
 		$('#panelTaskExtra .box-body').css('display', 'none');
 		console.log('on task click', this);
 		var task = new Object();
-		if($(this).data('id')) {	//добавляю ид если есть (и беру задачу из массива задач), чтоб знать есть ли она уже или ее надо добавить
+		if($(this).data('id') !== 'false') {	//добавляю ид если есть (и беру задачу из массива задач), чтоб знать есть ли она уже или ее надо добавить
 			task = allTasks[$(this).data('id')];
 			$('#buttonTaskAccept').data('id', $(this).data('id'));
 		} else {	//беру задачу по-умолчанию, зашитую в скрипт и в ид пишу фолс
@@ -514,9 +522,10 @@ $(document).ready(function() {
 	function showAll(arr) {
 		console.info('show all func ', arr);
 		$('#listTasks').empty();
-		// console.debug(mySort);
+		console.debug(mySort);
 		if($('#titlePage').text() == 'Мои задачи' && mySort.length !== 0) {
 			for(var i = 0; i < mySort.length; i++) { //вынести в функцию два куска и просто проходить по ней сколько то раз
+
 				var elem = $('<li class="flexrow" style=""><span class="handle ui-sortable-handle"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i></span><input value="" type="checkbox"><input class="text taskedit" value="' + allTasks[mySort[i]].name + '"></li>');
 				$('#listTasks').append(elem);
 				$(elem).data('id', allTasks[mySort[i]].id).data('sortid', i);
